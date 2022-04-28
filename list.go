@@ -2,7 +2,14 @@
 
 package godll
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+var (
+	IndexOutOfRangeError = errors.New("Index is out of range!")
+)
 
 type List[T any] struct {
 	head   *Node[T] // Pointer to head (first node in list).
@@ -62,6 +69,50 @@ func (l *List[T]) Prepend(node *Node[T]) {
 	node.next = oldHead
 	oldHead.previous = node
 	l.length++
+}
+
+func (l *List[T]) InsertAt(index int, node *Node[T]) error {
+	// Return error if index is larger than legth of list.
+	if index > l.length {
+		return IndexOutOfRangeError
+	}
+
+	// If index is 0 set node as new head of list and connect it to neighbours with new next and previous links.
+	// If length is 0, set node as tail also.
+	if index == 0 {
+		node.next = l.head
+		if l.length != 0 {
+			l.head.previous = node
+		}
+		l.head = node
+		if l.length == 0 {
+			l.tail = node
+		}
+		l.length++
+		return nil
+	}
+
+	// If index is equal to length of list set node as tail of a list and connect it to neighbours with new next and previous links.
+	if index == l.length {
+		node.previous = l.tail
+		l.tail.next = node
+		l.tail = node
+		l.length++
+		return nil
+	}
+
+	// Traverse through list to find index, insert new node and connect it to neighbours with new next and previous links.
+	current := l.head
+	for i := 1; i < index; i++ {
+		current = current.next
+	}
+	next := current.next
+	current.next = node
+	node.next = next
+	node.previous = current
+	next.previous = node
+	l.length++
+	return nil
 }
 
 // Print prints all elements in a List.

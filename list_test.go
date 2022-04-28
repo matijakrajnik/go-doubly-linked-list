@@ -11,24 +11,41 @@ func TestHead(t *testing.T) {
 	node1 := NewNode(8)
 	node2 := NewNode(2)
 	node3 := NewNode(5)
+
 	assert.Nil(t, list.Head())
+
 	list.Append(node1)
 	assert.Equal(t, node1, list.Head())
+
 	list.Prepend(node2)
 	assert.Equal(t, node2, list.Head())
+
 	list.Append(node3)
 	assert.Equal(t, node2, list.Head())
 }
 
 func TestLength(t *testing.T) {
 	list := &List[int]{}
+
 	assert.Equal(t, 0, list.Length())
+
 	list.Append(NewNode(8))
 	assert.Equal(t, 1, list.Length())
+
 	list.Prepend(NewNode(2))
 	assert.Equal(t, 2, list.Length())
+
 	list.Append(NewNode(5))
 	assert.Equal(t, 3, list.Length())
+
+	list.InsertAt(0, NewNode(145))
+	assert.Equal(t, 4, list.Length())
+
+	list.InsertAt(2, NewNode(65))
+	assert.Equal(t, 5, list.Length())
+
+	list.InsertAt(5, NewNode(9312))
+	assert.Equal(t, 6, list.Length())
 }
 
 func TestAppendInt(t *testing.T) {
@@ -36,6 +53,7 @@ func TestAppendInt(t *testing.T) {
 	list.Append(NewNode(8))
 	list.Append(NewNode(2))
 	list.Append(NewNode(5))
+
 	assert.Equal(t, 8, list.head.Value)
 	assert.Equal(t, 2, list.head.next.Value)
 	assert.Equal(t, 5, list.head.next.next.Value)
@@ -46,6 +64,7 @@ func TestAppendFloat64(t *testing.T) {
 	list.Append(NewNode(8.1))
 	list.Append(NewNode(2.2))
 	list.Append(NewNode(5.3))
+
 	assert.Equal(t, 8.1, list.head.Value)
 	assert.Equal(t, 2.2, list.head.next.Value)
 	assert.Equal(t, 5.3, list.head.next.next.Value)
@@ -56,6 +75,7 @@ func TestAppendString(t *testing.T) {
 	list.Append(NewNode("Bruce"))
 	list.Append(NewNode("Wayne"))
 	list.Append(NewNode("Batman"))
+
 	assert.Equal(t, "Bruce", list.head.Value)
 	assert.Equal(t, "Wayne", list.head.next.Value)
 	assert.Equal(t, "Batman", list.head.next.next.Value)
@@ -67,6 +87,7 @@ func TestAppendStruct(t *testing.T) {
 	superman := PersonTest{FirstName: "Clark", LastName: "Kent"}
 	list.Append(NewNode(batman))
 	list.Append(NewNode(superman))
+
 	assert.Equal(t, batman, list.head.Value)
 	assert.Equal(t, batman.FirstName, list.head.Value.FirstName)
 	assert.Equal(t, batman.LastName, list.head.Value.LastName)
@@ -80,6 +101,7 @@ func TestPrependInt(t *testing.T) {
 	list.Prepend(NewNode(8))
 	list.Prepend(NewNode(2))
 	list.Prepend(NewNode(5))
+
 	assert.Equal(t, 5, list.head.Value)
 	assert.Equal(t, 2, list.head.next.Value)
 	assert.Equal(t, 8, list.head.next.next.Value)
@@ -90,6 +112,7 @@ func TestPrependFloat64(t *testing.T) {
 	list.Prepend(NewNode(8.1))
 	list.Prepend(NewNode(2.2))
 	list.Prepend(NewNode(5.3))
+
 	assert.Equal(t, 5.3, list.head.Value)
 	assert.Equal(t, 2.2, list.head.next.Value)
 	assert.Equal(t, 8.1, list.head.next.next.Value)
@@ -100,6 +123,7 @@ func TestPrependString(t *testing.T) {
 	list.Prepend(NewNode("Bruce"))
 	list.Prepend(NewNode("Wayne"))
 	list.Prepend(NewNode("Batman"))
+
 	assert.Equal(t, "Batman", list.head.Value)
 	assert.Equal(t, "Wayne", list.head.next.Value)
 	assert.Equal(t, "Bruce", list.head.next.next.Value)
@@ -111,10 +135,101 @@ func TestPrependStruct(t *testing.T) {
 	superman := PersonTest{FirstName: "Clark", LastName: "Kent"}
 	list.Prepend(NewNode(batman))
 	list.Prepend(NewNode(superman))
+
 	assert.Equal(t, superman, list.head.Value)
 	assert.Equal(t, superman.FirstName, list.head.Value.FirstName)
 	assert.Equal(t, superman.LastName, list.head.Value.LastName)
+
 	assert.Equal(t, batman, list.head.next.Value)
 	assert.Equal(t, batman.FirstName, list.head.next.Value.FirstName)
 	assert.Equal(t, batman.LastName, list.head.next.Value.LastName)
+}
+
+func TestInsertAt(t *testing.T) {
+	list := &List[int]{}
+	node1 := NewNode(8)
+	node2 := NewNode(2)
+	node3 := NewNode(5)
+	list.Append(node1)
+	list.Append(node2)
+	list.Append(node3)
+
+	newNode := NewNode(12)
+	err := list.InsertAt(1, newNode)
+
+	assert.Nil(t, err)
+	assert.Equal(t, node1, newNode.previous)
+	assert.Equal(t, node2, newNode.next)
+}
+
+func TestInsertAtBeginning(t *testing.T) {
+	list := &List[int]{}
+	node1 := NewNode(8)
+	node2 := NewNode(2)
+	node3 := NewNode(5)
+	list.Append(node1)
+	list.Append(node2)
+	list.Append(node3)
+
+	newNode := NewNode(12)
+	err := list.InsertAt(0, newNode)
+
+	assert.Nil(t, err)
+	assert.Equal(t, newNode, list.head)
+	assert.Nil(t, newNode.previous)
+	assert.Equal(t, node1, newNode.next)
+}
+
+func TestInsertAtEnd(t *testing.T) {
+	list := &List[int]{}
+	node1 := NewNode(8)
+	node2 := NewNode(2)
+	node3 := NewNode(5)
+	list.Append(node1)
+	list.Append(node2)
+	list.Append(node3)
+
+	newNode := NewNode(12)
+	err := list.InsertAt(3, newNode)
+
+	assert.Nil(t, err)
+	assert.Equal(t, newNode, list.tail)
+	assert.Equal(t, node3, newNode.previous)
+	assert.Nil(t, newNode.next)
+}
+
+func TestInsertAtEmptyList(t *testing.T) {
+	list := &List[int]{}
+	node := NewNode(27)
+	err := list.InsertAt(0, node)
+
+	assert.Nil(t, err)
+	assert.Equal(t, node, list.head)
+	assert.Equal(t, node, list.tail)
+	assert.Equal(t, 1, list.length)
+}
+
+func TestInsertAtOutOfindex(t *testing.T) {
+	list := &List[int]{}
+
+	newNode1 := NewNode(12)
+	err := list.InsertAt(1, newNode1)
+	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Nil(t, list.head)
+	assert.Nil(t, list.tail)
+	assert.Equal(t, 0, list.length)
+
+	node1 := NewNode(8)
+	node2 := NewNode(2)
+	node3 := NewNode(5)
+	list.Append(node1)
+	list.Append(node2)
+	list.Append(node3)
+
+	newNode2 := NewNode(12)
+	err = list.InsertAt(4, newNode2)
+	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, node1, list.head)
+	assert.Equal(t, node3, list.tail)
+	assert.Equal(t, 3, list.length)
 }

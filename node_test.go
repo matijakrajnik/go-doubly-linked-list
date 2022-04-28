@@ -41,6 +41,7 @@ func TestNext(t *testing.T) {
 	list.Append(node1)
 	list.Append(node2)
 	list.Append(node3)
+
 	assert.Equal(t, node2, node1.Next())
 	assert.Equal(t, node3, node2.Next())
 	assert.Nil(t, node3.Next())
@@ -54,6 +55,7 @@ func TestPrevious(t *testing.T) {
 	list.Append(node1)
 	list.Append(node2)
 	list.Append(node3)
+
 	assert.Nil(t, node1.Previous())
 	assert.Equal(t, node1, node2.Previous())
 	assert.Equal(t, node2, node3.Previous())
