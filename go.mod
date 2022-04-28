@@ -1,4 +1,4 @@
-module github.com/matijakrajnik/go-doubly-linked-list
+module github.com/matijakrajnik/godll
 
 go 1.18
 
