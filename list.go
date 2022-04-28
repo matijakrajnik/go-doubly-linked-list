@@ -5,6 +5,7 @@ package godll
 import (
 	"errors"
 	"fmt"
+	"io"
 )
 
 var (
@@ -30,6 +31,19 @@ func (l *List[T]) Tail() *Node[T] {
 // Length returns number of List[T] length field.
 func (l *List[T]) Length() int {
 	return l.length
+}
+
+// Print prints all elements in a List using passed io.Writer interface.
+func (l *List[T]) Print(w io.Writer) {
+	if l.length == 0 {
+		return
+	}
+	current := l.head
+	for i := 1; i <= l.length; i++ {
+		fmt.Fprintf(w, "%v ", current.Value)
+		current = current.next
+	}
+	fmt.Fprintf(w, "\n")
 }
 
 // Append adds node to the end of the List.
@@ -126,17 +140,4 @@ func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
 		current = current.next
 	}
 	return current, nil
-}
-
-// Print prints all elements in a List.
-func (l *List[T]) Print() {
-	if l.length == 0 {
-		return
-	}
-	current := l.head
-	for i := 1; i <= l.length; i++ {
-		fmt.Printf("%v ", current.Value)
-		current = current.next
-	}
-	fmt.Printf("\n")
 }

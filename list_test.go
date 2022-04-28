@@ -1,6 +1,7 @@
 package godll
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,6 +47,29 @@ func TestLength(t *testing.T) {
 
 	list.InsertAt(5, NewNode(9312))
 	assert.Equal(t, 6, list.Length())
+}
+
+func TestPrint(t *testing.T) {
+	list := &List[int]{}
+	var output bytes.Buffer
+
+	list.Print(&output)
+	assert.Equal(t, "", output.String())
+
+	output.Reset()
+	list.Append(NewNode(4))
+	list.Print(&output)
+	assert.Equal(t, "4 \n", output.String())
+
+	output.Reset()
+	list.Append(NewNode(23))
+	list.Print(&output)
+	assert.Equal(t, "4 23 \n", output.String())
+
+	output.Reset()
+	list.Append(NewNode(1))
+	list.Print(&output)
+	assert.Equal(t, "4 23 1 \n", output.String())
 }
 
 func TestAppendInt(t *testing.T) {
