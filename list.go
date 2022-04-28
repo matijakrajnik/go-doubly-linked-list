@@ -1,4 +1,4 @@
-// Double linked list.
+// Doubly linked list.
 
 package godll
 

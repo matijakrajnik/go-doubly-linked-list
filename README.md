@@ -1,3 +1,3 @@
-# Golang Double Linked List
+# Golang Doubly Linked List
 
 ## TODO README
