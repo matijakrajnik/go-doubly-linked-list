@@ -115,6 +115,19 @@ func (l *List[T]) InsertAt(index int, node *Node[T]) error {
 	return nil
 }
 
+// GetByIndex retrieves node by index. Return error if index is out of range. Index of first node is 0.
+func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
+	if index >= l.length {
+		return nil, IndexOutOfRangeError
+	}
+
+	current := l.head
+	for i := 0; i < index; i++ {
+		current = current.next
+	}
+	return current, nil
+}
+
 // Print prints all elements in a List.
 func (l *List[T]) Print() {
 	if l.length == 0 {

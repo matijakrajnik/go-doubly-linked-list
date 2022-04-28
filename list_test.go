@@ -209,7 +209,7 @@ func TestInsertAtEmptyList(t *testing.T) {
 	assert.Equal(t, 1, list.length)
 }
 
-func TestInsertAtOutOfindex(t *testing.T) {
+func TestInsertAtOutOfRange(t *testing.T) {
 	list := &List[int]{}
 
 	newNode1 := NewNode(12)
@@ -232,4 +232,45 @@ func TestInsertAtOutOfindex(t *testing.T) {
 	assert.Equal(t, node1, list.head)
 	assert.Equal(t, node3, list.tail)
 	assert.Equal(t, 3, list.length)
+}
+
+func TestGetByIndex(t *testing.T) {
+	list := &List[int]{}
+	node1 := NewNode(8)
+	node2 := NewNode(2)
+	node3 := NewNode(5)
+	list.Append(node1)
+	list.Append(node2)
+	list.Append(node3)
+
+	retrieved, err := list.GetByIndex(0)
+	assert.Nil(t, err)
+	assert.Equal(t, node1, retrieved)
+
+	retrieved, err = list.GetByIndex(1)
+	assert.Nil(t, err)
+	assert.Equal(t, node2, retrieved)
+
+	retrieved, err = list.GetByIndex(2)
+	assert.Nil(t, err)
+	assert.Equal(t, node3, retrieved)
+}
+
+func TestGetByIndexOutRange(t *testing.T) {
+	list := &List[int]{}
+	node1 := NewNode(8)
+	node2 := NewNode(2)
+	node3 := NewNode(5)
+
+	retrieved, err := list.GetByIndex(0)
+	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Nil(t, retrieved)
+
+	list.Append(node1)
+	list.Append(node2)
+	list.Append(node3)
+
+	retrieved, err = list.GetByIndex(3)
+	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Nil(t, retrieved)
 }
