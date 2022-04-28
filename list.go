@@ -56,14 +56,11 @@ func (l *List[T]) Append(node *Node[T]) {
 		return
 	}
 
-	// If list not empty, find last node and set passed node as next node for current last one.
-	last := l.head
-	for i := 1; i < l.length; i++ {
-		last = last.next
-	}
-	last.next = node
-	node.previous = last
+	// Add current tail to new variable oldTail. Set passed node as a new tail and connect it to old tail with new next and previous links.
+	oldTail := l.tail
 	l.tail = node
+	node.previous = oldTail
+	oldTail.next = node
 	l.length++
 }
 
@@ -77,7 +74,7 @@ func (l *List[T]) Prepend(node *Node[T]) {
 		return
 	}
 
-	// Add current head to new variable oldHead. Set passed node as a new head. In new head set next node to be old head.
+	// Add current head to new variable oldHead. Set passed node as a new head and connect it to old head with new next and previous links.
 	oldHead := l.head
 	l.head = node
 	node.next = oldHead
