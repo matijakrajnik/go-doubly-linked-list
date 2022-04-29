@@ -151,3 +151,114 @@ func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
 	}
 	return current, nil
 }
+
+// Swap changes places of nodes on passed positions.
+func (l *List[T]) Swap(i, j int) error {
+	// Return error if any index is out of range.
+	if i >= l.length || j >= l.length {
+		return IndexOutOfRangeError
+	}
+
+	// Do nothing and return if length of lsit is 1
+	if i == j || l.length == 1 {
+		return nil
+	}
+
+	// If i > j switch them so we have easier corner cases to handle.
+	// Now node with index "i" can be only head, it can't be tail.
+	// And node with index "j" can only be tail, it can't be head.
+	if i > j {
+		i, j = j, i
+	}
+
+	// Retrieve nodes with passed indexes.
+	node1, err := l.GetByIndex(i)
+	if err != nil {
+		return err
+	}
+	node2, err := l.GetByIndex(j)
+	if err != nil {
+		return err
+	}
+
+	if j-i == 1 {
+		l.swapNeighbours(node1, node2)
+		return nil
+	}
+
+	l.swap(node1, node2)
+
+	return nil
+}
+
+func (l *List[T]) swapNeighbours(node1, node2 *Node[T]) {
+	// Define variables where outer neihgbours of both nodes will be saved.
+	var node1Prev *Node[T]
+	var node2Next *Node[T]
+
+	if node1 != l.head {
+		node1Prev = node1.previous
+	} else {
+		l.head = node2
+	}
+
+	if node2 != l.tail {
+		node2Next = node2.next
+	} else {
+		l.tail = node1
+	}
+
+	// Connect nodes with new neighoubrs.
+	node1.next = node2Next
+	node1.previous = node2
+	node2.next = node1
+	node2.previous = node1Prev
+
+	// Connect old outer neighbours with new nodes.
+	if node2 != l.head {
+		node1Prev.next = node2
+	}
+
+	if node1 != l.tail {
+		node2Next.previous = node1
+	}
+}
+
+func (l *List[T]) swap(node1, node2 *Node[T]) {
+	// Define variables where neihgbours of both nodes will be saved.
+	var node1Prev *Node[T]
+	var node1Next *Node[T]
+	var node2Next *Node[T]
+	var node2Prev *Node[T]
+
+	if node1 != l.head {
+		node1Prev = node1.previous
+	} else {
+		l.head = node2
+	}
+	node1Next = node1.next
+
+	node2Prev = node2.previous
+	if node2 != l.tail {
+		node2Next = node2.next
+	} else {
+		l.tail = node1
+	}
+
+	// Connect nodes with new neighoubrs.
+	node1.next = node2Next
+	node1.previous = node2Prev
+	node2.next = node1Next
+	node2.previous = node1Prev
+
+	// Connect old neighbours with new nodes.
+	if node2 != l.head {
+		node1Prev.next = node2
+	}
+	node1Next.previous = node2
+
+	if node1 != l.tail {
+		node2Next.previous = node1
+	}
+	node2Prev.next = node1
+}

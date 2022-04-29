@@ -310,3 +310,78 @@ func TestGetByIndexOutRange(t *testing.T) {
 	assert.Equal(t, IndexOutOfRangeError, err)
 	assert.Nil(t, retrieved)
 }
+
+func TestSwap(t *testing.T) {
+	list := &List[int]{}
+
+	nodes := []*Node[int]{
+		NewNode(8),
+		NewNode(2),
+		NewNode(5),
+		NewNode(4),
+		NewNode(9),
+	}
+
+	for _, node := range nodes {
+		list.Append(node)
+	}
+
+	// Test all possible combinations for list with 5 nodes.
+	indexCombinations := [][]int{
+		{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4},
+		{1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4},
+		{2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4},
+		{3, 0}, {3, 1}, {3, 2}, {3, 3}, {3, 4},
+		{4, 0}, {4, 1}, {4, 2}, {4, 3}, {4, 4},
+	}
+
+	for _, testSet := range indexCombinations {
+		// Swap places once.
+		err := list.Swap(testSet[0], testSet[1])
+		assert.Nil(t, err)
+		retrieved, err := list.GetByIndex(testSet[0])
+		assert.Nil(t, err)
+		assert.Equal(t, nodes[testSet[1]], retrieved)
+		retrieved, err = list.GetByIndex(testSet[1])
+		assert.Nil(t, err)
+		assert.Equal(t, nodes[testSet[0]], retrieved)
+
+		// Swap places of same elements again to reset to previous positions.
+		err = list.Swap(testSet[1], testSet[0])
+		assert.Nil(t, err)
+		retrieved, err = list.GetByIndex(testSet[0])
+		assert.Nil(t, err)
+		assert.Equal(t, nodes[testSet[0]], retrieved)
+		retrieved, err = list.GetByIndex(testSet[1])
+		assert.Nil(t, err)
+		assert.Equal(t, nodes[testSet[1]], retrieved)
+	}
+}
+
+func TestSwapOutOfRange(t *testing.T) {
+	list := &List[int]{}
+
+	nodes := []*Node[int]{
+		NewNode(8),
+		NewNode(2),
+		NewNode(5),
+		NewNode(4),
+		NewNode(9),
+	}
+
+	for _, node := range nodes {
+		list.Append(node)
+	}
+
+	err := list.Swap(1, 5)
+	assert.Equal(t, IndexOutOfRangeError, err)
+
+	err = list.Swap(5, 1)
+	assert.Equal(t, IndexOutOfRangeError, err)
+
+	err = list.Swap(5, 6)
+	assert.Equal(t, IndexOutOfRangeError, err)
+
+	err = list.Swap(6, 5)
+	assert.Equal(t, IndexOutOfRangeError, err)
+}
