@@ -263,9 +263,13 @@ func TestGetByIndex(t *testing.T) {
 	node1 := NewNode(8)
 	node2 := NewNode(2)
 	node3 := NewNode(5)
+	node4 := NewNode(4)
+	node5 := NewNode(9)
 	list.Append(node1)
 	list.Append(node2)
 	list.Append(node3)
+	list.Append(node4)
+	list.Append(node5)
 
 	retrieved, err := list.GetByIndex(0)
 	assert.Nil(t, err)
@@ -278,6 +282,14 @@ func TestGetByIndex(t *testing.T) {
 	retrieved, err = list.GetByIndex(2)
 	assert.Nil(t, err)
 	assert.Equal(t, node3, retrieved)
+
+	retrieved, err = list.GetByIndex(3)
+	assert.Nil(t, err)
+	assert.Equal(t, node4, retrieved)
+
+	retrieved, err = list.GetByIndex(4)
+	assert.Nil(t, err)
+	assert.Equal(t, node5, retrieved)
 }
 
 func TestGetByIndexOutRange(t *testing.T) {

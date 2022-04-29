@@ -132,9 +132,22 @@ func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
 		return nil, IndexOutOfRangeError
 	}
 
-	current := l.head
-	for i := 0; i < index; i++ {
-		current = current.next
+	// Calculate index in the middle of the list.
+	m := l.length / 2
+
+	// If index is closer to head start iterating through nodes from head.
+	if index < m {
+		current := l.head
+		for i := 0; i < index; i++ {
+			current = current.next
+		}
+		return current, nil
+	}
+
+	// If index is closer to tail start iterating through nodes from tail.
+	current := l.tail
+	for i := 0; i < (l.length - index - 1); i++ {
+		current = current.previous
 	}
 	return current, nil
 }
