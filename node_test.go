@@ -34,7 +34,7 @@ func TestNewNodeStruct(t *testing.T) {
 }
 
 func TestNext(t *testing.T) {
-	_, nodes := testList(3)
+	_, nodes := testListInt(3)
 
 	assert.Equal(t, nodes[1], nodes[0].Next())
 	assert.Equal(t, nodes[2], nodes[1].Next())
@@ -42,7 +42,7 @@ func TestNext(t *testing.T) {
 }
 
 func TestPrevious(t *testing.T) {
-	_, nodes := testList(3)
+	_, nodes := testListInt(3)
 
 	assert.Nil(t, nodes[0].Previous())
 	assert.Equal(t, nodes[0], nodes[1].Previous())

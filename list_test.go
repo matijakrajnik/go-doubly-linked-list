@@ -9,7 +9,7 @@ import (
 
 func TestHead(t *testing.T) {
 	list := &List[int]{}
-	nodes := testNodes(4)
+	nodes := testNodesInt(4)
 
 	assert.Nil(t, list.Head())
 
@@ -34,7 +34,7 @@ func TestHead(t *testing.T) {
 
 func TestTail(t *testing.T) {
 	list := &List[int]{}
-	nodes := testNodes(4)
+	nodes := testNodesInt(4)
 
 	assert.Nil(t, list.Tail())
 
@@ -59,7 +59,7 @@ func TestTail(t *testing.T) {
 
 func TestLength(t *testing.T) {
 	list := &List[int]{}
-	nodes := testNodes(6)
+	nodes := testNodesInt(6)
 
 	assert.Equal(t, 0, list.Length())
 
@@ -107,103 +107,98 @@ func TestPrint(t *testing.T) {
 
 func TestAppendInt(t *testing.T) {
 	list := &List[int]{}
-	list.Append(NewNode(8))
-	list.Append(NewNode(2))
-	list.Append(NewNode(5))
+	nodes := testNodesInt(5)
 
-	assert.Equal(t, 8, list.head.Value)
-	assert.Equal(t, 2, list.head.next.Value)
-	assert.Equal(t, 5, list.head.next.next.Value)
+	for _, node := range nodes {
+		list.Append(node)
+		assert.Equal(t, node, list.tail)
+		assert.Equal(t, node.Value, list.tail.Value)
+	}
 }
 
 func TestAppendFloat64(t *testing.T) {
 	list := &List[float64]{}
-	list.Append(NewNode(8.1))
-	list.Append(NewNode(2.2))
-	list.Append(NewNode(5.3))
+	nodes := testNodesFloat64(5)
 
-	assert.Equal(t, 8.1, list.head.Value)
-	assert.Equal(t, 2.2, list.head.next.Value)
-	assert.Equal(t, 5.3, list.head.next.next.Value)
+	for _, node := range nodes {
+		list.Append(node)
+		assert.Equal(t, node, list.tail)
+		assert.Equal(t, node.Value, list.tail.Value)
+	}
 }
 
 func TestAppendString(t *testing.T) {
 	list := &List[string]{}
-	list.Append(NewNode("Bruce"))
-	list.Append(NewNode("Wayne"))
-	list.Append(NewNode("Batman"))
+	nodes := testNodesString(5)
 
-	assert.Equal(t, "Bruce", list.head.Value)
-	assert.Equal(t, "Wayne", list.head.next.Value)
-	assert.Equal(t, "Batman", list.head.next.next.Value)
+	for _, node := range nodes {
+		list.Append(node)
+		assert.Equal(t, node, list.tail)
+		assert.Equal(t, node.Value, list.tail.Value)
+	}
 }
 
 func TestAppendStruct(t *testing.T) {
 	list := &List[PersonTest]{}
-	batman := PersonTest{FirstName: "Bruce", LastName: "Wayne"}
-	superman := PersonTest{FirstName: "Clark", LastName: "Kent"}
-	list.Append(NewNode(batman))
-	list.Append(NewNode(superman))
+	nodes := testNodesStruct(5)
 
-	assert.Equal(t, batman, list.head.Value)
-	assert.Equal(t, batman.FirstName, list.head.Value.FirstName)
-	assert.Equal(t, batman.LastName, list.head.Value.LastName)
-	assert.Equal(t, superman, list.head.next.Value)
-	assert.Equal(t, superman.FirstName, list.head.next.Value.FirstName)
-	assert.Equal(t, superman.LastName, list.head.next.Value.LastName)
+	for _, node := range nodes {
+		list.Append(node)
+		assert.Equal(t, node, list.tail)
+		assert.Equal(t, node.Value, list.tail.Value)
+		assert.Equal(t, node.Value.FirstName, list.tail.Value.FirstName)
+		assert.Equal(t, node.Value.LastName, list.tail.Value.LastName)
+	}
 }
 
 func TestPrependInt(t *testing.T) {
 	list := &List[int]{}
-	list.Prepend(NewNode(8))
-	list.Prepend(NewNode(2))
-	list.Prepend(NewNode(5))
+	nodes := testNodesInt(5)
 
-	assert.Equal(t, 5, list.head.Value)
-	assert.Equal(t, 2, list.head.next.Value)
-	assert.Equal(t, 8, list.head.next.next.Value)
+	for _, node := range nodes {
+		list.Prepend(node)
+		assert.Equal(t, node, list.head)
+		assert.Equal(t, node.Value, list.head.Value)
+	}
 }
 
 func TestPrependFloat64(t *testing.T) {
 	list := &List[float64]{}
-	list.Prepend(NewNode(8.1))
-	list.Prepend(NewNode(2.2))
-	list.Prepend(NewNode(5.3))
+	nodes := testNodesFloat64(5)
 
-	assert.Equal(t, 5.3, list.head.Value)
-	assert.Equal(t, 2.2, list.head.next.Value)
-	assert.Equal(t, 8.1, list.head.next.next.Value)
+	for _, node := range nodes {
+		list.Prepend(node)
+		assert.Equal(t, node, list.head)
+		assert.Equal(t, node.Value, list.head.Value)
+	}
 }
 
 func TestPrependString(t *testing.T) {
 	list := &List[string]{}
-	list.Prepend(NewNode("Bruce"))
-	list.Prepend(NewNode("Wayne"))
-	list.Prepend(NewNode("Batman"))
+	nodes := testNodesString(5)
 
-	assert.Equal(t, "Batman", list.head.Value)
-	assert.Equal(t, "Wayne", list.head.next.Value)
-	assert.Equal(t, "Bruce", list.head.next.next.Value)
+	for _, node := range nodes {
+		list.Prepend(node)
+		assert.Equal(t, node, list.head)
+		assert.Equal(t, node.Value, list.head.Value)
+	}
 }
 
 func TestPrependStruct(t *testing.T) {
 	list := &List[PersonTest]{}
-	batman := PersonTest{FirstName: "Bruce", LastName: "Wayne"}
-	superman := PersonTest{FirstName: "Clark", LastName: "Kent"}
-	list.Prepend(NewNode(batman))
-	list.Prepend(NewNode(superman))
+	nodes := testNodesStruct(5)
 
-	assert.Equal(t, superman, list.head.Value)
-	assert.Equal(t, superman.FirstName, list.head.Value.FirstName)
-	assert.Equal(t, superman.LastName, list.head.Value.LastName)
-
-	assert.Equal(t, batman, list.head.next.Value)
-	assert.Equal(t, batman.FirstName, list.head.next.Value.FirstName)
-	assert.Equal(t, batman.LastName, list.head.next.Value.LastName)
+	for _, node := range nodes {
+		list.Prepend(node)
+		assert.Equal(t, node, list.head)
+		assert.Equal(t, node.Value, list.head.Value)
+		assert.Equal(t, node.Value.FirstName, list.head.Value.FirstName)
+		assert.Equal(t, node.Value.LastName, list.head.Value.LastName)
+	}
 }
 
 func TestInsertAt(t *testing.T) {
-	list, nodes := testList(3)
+	list, nodes := testListInt(3)
 
 	newNode := NewNode(12)
 	err := list.InsertAt(1, newNode)
@@ -214,7 +209,7 @@ func TestInsertAt(t *testing.T) {
 }
 
 func TestInsertAtBeginning(t *testing.T) {
-	list, nodes := testList(3)
+	list, nodes := testListInt(3)
 
 	newNode := NewNode(12)
 	err := list.InsertAt(0, newNode)
@@ -226,7 +221,7 @@ func TestInsertAtBeginning(t *testing.T) {
 }
 
 func TestInsertAtEnd(t *testing.T) {
-	list, nodes := testList(3)
+	list, nodes := testListInt(3)
 
 	newNode := NewNode(12)
 	err := list.InsertAt(3, newNode)
@@ -258,7 +253,7 @@ func TestInsertAtOutOfRange(t *testing.T) {
 	assert.Nil(t, list.tail)
 	assert.Equal(t, 0, list.length)
 
-	list, nodes := testList(3)
+	list, nodes := testListInt(3)
 
 	newNode2 := NewNode(12)
 	err = list.InsertAt(4, newNode2)
@@ -269,7 +264,7 @@ func TestInsertAtOutOfRange(t *testing.T) {
 }
 
 func TestInsertNegativeIndex(t *testing.T) {
-	list, _ := testList(3)
+	list, _ := testListInt(3)
 
 	err := list.InsertAt(-1, NewNode(5))
 	assert.Equal(t, &NegativeIndexError{Index: -1}, err)
@@ -277,7 +272,7 @@ func TestInsertNegativeIndex(t *testing.T) {
 }
 
 func TestGetByIndex(t *testing.T) {
-	list, nodes := testList(5)
+	list, nodes := testListInt(5)
 
 	for i, node := range nodes {
 		retrieved, err := list.GetByIndex(i)
@@ -287,13 +282,13 @@ func TestGetByIndex(t *testing.T) {
 }
 
 func TestGetByIndexOutRange(t *testing.T) {
-	list, _ := testList(0)
+	list, _ := testListInt(0)
 
 	retrieved, err := list.GetByIndex(0)
 	assert.Equal(t, &IndexOutOfRangeError{Index: 0}, err)
 	assert.Nil(t, retrieved)
 
-	list, _ = testList(3)
+	list, _ = testListInt(3)
 
 	retrieved, err = list.GetByIndex(3)
 	assert.Equal(t, &IndexOutOfRangeError{Index: 3}, err)
@@ -301,15 +296,105 @@ func TestGetByIndexOutRange(t *testing.T) {
 }
 
 func TestGetByNegativeIndex(t *testing.T) {
-	list, _ := testList(3)
+	list, _ := testListInt(3)
 
 	retrieved, err := list.GetByIndex(-1)
 	assert.Equal(t, &NegativeIndexError{Index: -1}, err)
 	assert.Nil(t, retrieved)
 }
 
+func TestGetByValueInt(t *testing.T) {
+	list, nodes := testListInt(5)
+
+	for i, node := range nodes {
+		index := list.GetByValue(node.Value)
+		assert.Equal(t, i, index)
+	}
+}
+
+func TestGetByValueNotfoundInt(t *testing.T) {
+	list := &List[int]{}
+	index := list.GetByValue(123)
+	assert.Equal(t, -1, index)
+
+	list, _ = testListInt(5)
+	index = list.GetByValue(123)
+	assert.Equal(t, -1, index)
+}
+
+func TestGetByValueFloat64(t *testing.T) {
+	list, nodes := testListFloat64(5)
+
+	for i, node := range nodes {
+		index := list.GetByValue(node.Value)
+		assert.Equal(t, i, index)
+	}
+}
+
+func TestGetByValueNotfoundFloat64(t *testing.T) {
+	list := &List[float64]{}
+	index := list.GetByValue(1.23)
+	assert.Equal(t, -1, index)
+
+	list, _ = testListFloat64(5)
+	index = list.GetByValue(1.23)
+	assert.Equal(t, -1, index)
+}
+
+func TestGetByValueString(t *testing.T) {
+	list, nodes := testListString(5)
+
+	for i, node := range nodes {
+		index := list.GetByValue(node.Value)
+		assert.Equal(t, i, index)
+	}
+}
+
+func TestGetByValueNotfoundString(t *testing.T) {
+	list := &List[string]{}
+	index := list.GetByValue("NOT FOUND")
+	assert.Equal(t, -1, index)
+
+	list, _ = testListString(5)
+	index = list.GetByValue("NOT FOUND")
+	assert.Equal(t, -1, index)
+}
+
+func TestGetByValueStruct(t *testing.T) {
+	list, nodes := testListStruct(5)
+
+	for i, node := range nodes {
+		index := list.GetByValue(node.Value)
+		assert.Equal(t, i, index)
+	}
+
+	list = &List[PersonTest]{}
+	p1 := PersonTest{FirstName: "Bruce", LastName: "Wayne"}
+	var p2 PersonTest
+
+	list.Append(NewNode(p1))
+	i := list.GetByValue(p2)
+	assert.Equal(t, -1, i)
+}
+
+func TestGetByValueNotfoundStruct(t *testing.T) {
+	person := PersonTest{FirstName: "Bruce", LastName: "Wayne"}
+
+	list := &List[PersonTest]{}
+	index := list.GetByValue(person)
+	assert.Equal(t, -1, index)
+
+	list, _ = testListStruct(5)
+	index = list.GetByValue(person)
+	assert.Equal(t, -1, index)
+
+	var empty PersonTest
+	index = list.GetByValue(empty)
+	assert.Equal(t, -1, index)
+}
+
 func TestSwap(t *testing.T) {
-	list, nodes := testList(5)
+	list, nodes := testListInt(5)
 
 	// Test all possible combinations for list with 5 nodes.
 	indexCombinations := [][]int{
@@ -344,7 +429,7 @@ func TestSwap(t *testing.T) {
 }
 
 func TestSwapOutOfRange(t *testing.T) {
-	list, _ := testList(5)
+	list, _ := testListInt(5)
 
 	err := list.Swap(1, 5)
 	assert.Equal(t, &IndexOutOfRangeError{Index: 5}, err)
@@ -360,7 +445,7 @@ func TestSwapOutOfRange(t *testing.T) {
 }
 
 func TestSwapNegativeIndex(t *testing.T) {
-	list, _ := testList(5)
+	list, _ := testListInt(5)
 
 	err := list.Swap(-1, 2)
 	assert.Equal(t, &NegativeIndexError{Index: -1}, err)

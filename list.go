@@ -182,6 +182,18 @@ func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
 	return current, nil
 }
 
+// GetByValue returns index of node with passed value. Returns -1 if there is no node with given value in List.
+func (l *List[T]) GetByValue(value T) int {
+	current := l.head
+	for i := 0; i < l.length; i++ {
+		if current.Value == value {
+			return i
+		}
+		current = current.next
+	}
+	return -1
+}
+
 // Swap changes places of nodes on passed positions.
 func (l *List[T]) Swap(i, j int) error {
 	if err := l.validateGetIndex(i); err != nil {
