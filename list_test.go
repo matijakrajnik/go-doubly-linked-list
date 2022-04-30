@@ -9,43 +9,76 @@ import (
 
 func TestHead(t *testing.T) {
 	list := &List[int]{}
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
+	nodes := testNodes(4)
 
 	assert.Nil(t, list.Head())
 
-	list.Append(node1)
-	assert.Equal(t, node1, list.Head())
+	list.Append(nodes[0])
+	assert.Equal(t, nodes[0], list.Head())
 
-	list.Prepend(node2)
-	assert.Equal(t, node2, list.Head())
+	list.Prepend(nodes[1])
+	assert.Equal(t, nodes[1], list.Head())
 
-	list.Append(node3)
-	assert.Equal(t, node2, list.Head())
+	list.Append(nodes[2])
+	assert.Equal(t, nodes[1], list.Head())
+
+	err := list.Swap(0, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[2], list.Head())
+
+	assert.Nil(t, err)
+	err = list.InsertAt(0, nodes[3])
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3], list.Head())
+}
+
+func TestTail(t *testing.T) {
+	list := &List[int]{}
+	nodes := testNodes(4)
+
+	assert.Nil(t, list.Tail())
+
+	list.Append(nodes[0])
+	assert.Equal(t, nodes[0], list.Tail())
+
+	list.Prepend(nodes[1])
+	assert.Equal(t, nodes[0], list.Tail())
+
+	list.Append(nodes[2])
+	assert.Equal(t, nodes[2], list.Tail())
+
+	err := list.Swap(0, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[1], list.Tail())
+
+	assert.Nil(t, err)
+	err = list.InsertAt(3, nodes[3])
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3], list.Tail())
 }
 
 func TestLength(t *testing.T) {
 	list := &List[int]{}
+	nodes := testNodes(6)
 
 	assert.Equal(t, 0, list.Length())
 
-	list.Append(NewNode(8))
+	list.Append(nodes[0])
 	assert.Equal(t, 1, list.Length())
 
-	list.Prepend(NewNode(2))
+	list.Prepend(nodes[1])
 	assert.Equal(t, 2, list.Length())
 
-	list.Append(NewNode(5))
+	list.Append(nodes[2])
 	assert.Equal(t, 3, list.Length())
 
-	list.InsertAt(0, NewNode(145))
+	list.InsertAt(0, nodes[3])
 	assert.Equal(t, 4, list.Length())
 
-	list.InsertAt(2, NewNode(65))
+	list.InsertAt(2, nodes[4])
 	assert.Equal(t, 5, list.Length())
 
-	list.InsertAt(5, NewNode(9312))
+	list.InsertAt(5, nodes[5])
 	assert.Equal(t, 6, list.Length())
 }
 
@@ -170,30 +203,18 @@ func TestPrependStruct(t *testing.T) {
 }
 
 func TestInsertAt(t *testing.T) {
-	list := &List[int]{}
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
-	list.Append(node1)
-	list.Append(node2)
-	list.Append(node3)
+	list, nodes := testList(3)
 
 	newNode := NewNode(12)
 	err := list.InsertAt(1, newNode)
 
 	assert.Nil(t, err)
-	assert.Equal(t, node1, newNode.previous)
-	assert.Equal(t, node2, newNode.next)
+	assert.Equal(t, nodes[0], newNode.previous)
+	assert.Equal(t, nodes[1], newNode.next)
 }
 
 func TestInsertAtBeginning(t *testing.T) {
-	list := &List[int]{}
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
-	list.Append(node1)
-	list.Append(node2)
-	list.Append(node3)
+	list, nodes := testList(3)
 
 	newNode := NewNode(12)
 	err := list.InsertAt(0, newNode)
@@ -201,24 +222,18 @@ func TestInsertAtBeginning(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, newNode, list.head)
 	assert.Nil(t, newNode.previous)
-	assert.Equal(t, node1, newNode.next)
+	assert.Equal(t, nodes[0], newNode.next)
 }
 
 func TestInsertAtEnd(t *testing.T) {
-	list := &List[int]{}
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
-	list.Append(node1)
-	list.Append(node2)
-	list.Append(node3)
+	list, nodes := testList(3)
 
 	newNode := NewNode(12)
 	err := list.InsertAt(3, newNode)
 
 	assert.Nil(t, err)
 	assert.Equal(t, newNode, list.tail)
-	assert.Equal(t, node3, newNode.previous)
+	assert.Equal(t, nodes[2], newNode.previous)
 	assert.Nil(t, newNode.next)
 }
 
@@ -243,68 +258,34 @@ func TestInsertAtOutOfRange(t *testing.T) {
 	assert.Nil(t, list.tail)
 	assert.Equal(t, 0, list.length)
 
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
-	list.Append(node1)
-	list.Append(node2)
-	list.Append(node3)
+	list, nodes := testList(3)
 
 	newNode2 := NewNode(12)
 	err = list.InsertAt(4, newNode2)
 	assert.Equal(t, IndexOutOfRangeError, err)
-	assert.Equal(t, node1, list.head)
-	assert.Equal(t, node3, list.tail)
+	assert.Equal(t, nodes[0], list.head)
+	assert.Equal(t, nodes[2], list.tail)
 	assert.Equal(t, 3, list.length)
 }
 
 func TestGetByIndex(t *testing.T) {
-	list := &List[int]{}
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
-	node4 := NewNode(4)
-	node5 := NewNode(9)
-	list.Append(node1)
-	list.Append(node2)
-	list.Append(node3)
-	list.Append(node4)
-	list.Append(node5)
+	list, nodes := testList(5)
 
-	retrieved, err := list.GetByIndex(0)
-	assert.Nil(t, err)
-	assert.Equal(t, node1, retrieved)
-
-	retrieved, err = list.GetByIndex(1)
-	assert.Nil(t, err)
-	assert.Equal(t, node2, retrieved)
-
-	retrieved, err = list.GetByIndex(2)
-	assert.Nil(t, err)
-	assert.Equal(t, node3, retrieved)
-
-	retrieved, err = list.GetByIndex(3)
-	assert.Nil(t, err)
-	assert.Equal(t, node4, retrieved)
-
-	retrieved, err = list.GetByIndex(4)
-	assert.Nil(t, err)
-	assert.Equal(t, node5, retrieved)
+	for i, node := range nodes {
+		retrieved, err := list.GetByIndex(i)
+		assert.Nil(t, err)
+		assert.Equal(t, node, retrieved)
+	}
 }
 
 func TestGetByIndexOutRange(t *testing.T) {
-	list := &List[int]{}
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
+	list, _ := testList(0)
 
 	retrieved, err := list.GetByIndex(0)
 	assert.Equal(t, IndexOutOfRangeError, err)
 	assert.Nil(t, retrieved)
 
-	list.Append(node1)
-	list.Append(node2)
-	list.Append(node3)
+	list, _ = testList(3)
 
 	retrieved, err = list.GetByIndex(3)
 	assert.Equal(t, IndexOutOfRangeError, err)
@@ -312,19 +293,7 @@ func TestGetByIndexOutRange(t *testing.T) {
 }
 
 func TestSwap(t *testing.T) {
-	list := &List[int]{}
-
-	nodes := []*Node[int]{
-		NewNode(8),
-		NewNode(2),
-		NewNode(5),
-		NewNode(4),
-		NewNode(9),
-	}
-
-	for _, node := range nodes {
-		list.Append(node)
-	}
+	list, nodes := testList(5)
 
 	// Test all possible combinations for list with 5 nodes.
 	indexCombinations := [][]int{
@@ -359,19 +328,7 @@ func TestSwap(t *testing.T) {
 }
 
 func TestSwapOutOfRange(t *testing.T) {
-	list := &List[int]{}
-
-	nodes := []*Node[int]{
-		NewNode(8),
-		NewNode(2),
-		NewNode(5),
-		NewNode(4),
-		NewNode(9),
-	}
-
-	for _, node := range nodes {
-		list.Append(node)
-	}
+	list, _ := testList(5)
 
 	err := list.Swap(1, 5)
 	assert.Equal(t, IndexOutOfRangeError, err)

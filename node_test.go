@@ -34,29 +34,17 @@ func TestNewNodeStruct(t *testing.T) {
 }
 
 func TestNext(t *testing.T) {
-	list := &List[int]{}
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
-	list.Append(node1)
-	list.Append(node2)
-	list.Append(node3)
+	_, nodes := testList(3)
 
-	assert.Equal(t, node2, node1.Next())
-	assert.Equal(t, node3, node2.Next())
-	assert.Nil(t, node3.Next())
+	assert.Equal(t, nodes[1], nodes[0].Next())
+	assert.Equal(t, nodes[2], nodes[1].Next())
+	assert.Nil(t, nodes[2].Next())
 }
 
 func TestPrevious(t *testing.T) {
-	list := &List[int]{}
-	node1 := NewNode(8)
-	node2 := NewNode(2)
-	node3 := NewNode(5)
-	list.Append(node1)
-	list.Append(node2)
-	list.Append(node3)
+	_, nodes := testList(3)
 
-	assert.Nil(t, node1.Previous())
-	assert.Equal(t, node1, node2.Previous())
-	assert.Equal(t, node2, node3.Previous())
+	assert.Nil(t, nodes[0].Previous())
+	assert.Equal(t, nodes[0], nodes[1].Previous())
+	assert.Equal(t, nodes[1], nodes[2].Previous())
 }
