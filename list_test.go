@@ -253,7 +253,7 @@ func TestInsertAtOutOfRange(t *testing.T) {
 
 	newNode1 := NewNode(12)
 	err := list.InsertAt(1, newNode1)
-	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 1}, err)
 	assert.Nil(t, list.head)
 	assert.Nil(t, list.tail)
 	assert.Equal(t, 0, list.length)
@@ -262,9 +262,17 @@ func TestInsertAtOutOfRange(t *testing.T) {
 
 	newNode2 := NewNode(12)
 	err = list.InsertAt(4, newNode2)
-	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 4}, err)
 	assert.Equal(t, nodes[0], list.head)
 	assert.Equal(t, nodes[2], list.tail)
+	assert.Equal(t, 3, list.length)
+}
+
+func TestInsertNegativeIndex(t *testing.T) {
+	list, _ := testList(3)
+
+	err := list.InsertAt(-1, NewNode(5))
+	assert.Equal(t, &NegativeIndexError{Index: -1}, err)
 	assert.Equal(t, 3, list.length)
 }
 
@@ -282,13 +290,21 @@ func TestGetByIndexOutRange(t *testing.T) {
 	list, _ := testList(0)
 
 	retrieved, err := list.GetByIndex(0)
-	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 0}, err)
 	assert.Nil(t, retrieved)
 
 	list, _ = testList(3)
 
 	retrieved, err = list.GetByIndex(3)
-	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 3}, err)
+	assert.Nil(t, retrieved)
+}
+
+func TestGetByNegativeIndex(t *testing.T) {
+	list, _ := testList(3)
+
+	retrieved, err := list.GetByIndex(-1)
+	assert.Equal(t, &NegativeIndexError{Index: -1}, err)
 	assert.Nil(t, retrieved)
 }
 
@@ -331,14 +347,25 @@ func TestSwapOutOfRange(t *testing.T) {
 	list, _ := testList(5)
 
 	err := list.Swap(1, 5)
-	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 5}, err)
 
 	err = list.Swap(5, 1)
-	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 5}, err)
 
 	err = list.Swap(5, 6)
-	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 5}, err)
 
 	err = list.Swap(6, 5)
-	assert.Equal(t, IndexOutOfRangeError, err)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 6}, err)
+}
+
+func TestSwapNegativeIndex(t *testing.T) {
+	list, _ := testList(5)
+
+	err := list.Swap(-1, 2)
+	assert.Equal(t, &NegativeIndexError{Index: -1}, err)
+
+	err = list.Swap(3, -1)
+	assert.Equal(t, &NegativeIndexError{Index: -1}, err)
+
 }

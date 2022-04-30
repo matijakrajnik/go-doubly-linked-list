@@ -3,13 +3,8 @@
 package godll
 
 import (
-	"errors"
 	"fmt"
 	"io"
-)
-
-var (
-	IndexOutOfRangeError = errors.New("Index is out of range!")
 )
 
 type List[T any] struct {
@@ -44,6 +39,41 @@ func (l *List[T]) Print(w io.Writer) {
 		current = current.next
 	}
 	fmt.Fprintf(w, "\n")
+}
+
+func (l *List[T]) validateNegativeIndex(index int) error {
+	// Return error if index is negative number.
+	if index < 0 {
+		return &NegativeIndexError{Index: index}
+	}
+
+	return nil
+}
+
+func (l *List[T]) validateGetIndex(index int) error {
+	if err := l.validateNegativeIndex(index); err != nil {
+		return err
+	}
+
+	// Return error if index is larger than legth of list.
+	if index >= l.length {
+		return &IndexOutOfRangeError{Index: index}
+	}
+
+	return nil
+}
+
+func (l *List[T]) validateInsertIndex(index int) error {
+	if err := l.validateNegativeIndex(index); err != nil {
+		return err
+	}
+
+	// Return error if index is larger than legth of list.
+	if index > l.length {
+		return &IndexOutOfRangeError{Index: index}
+	}
+
+	return nil
 }
 
 // Append adds node to the end of the List.
@@ -83,9 +113,8 @@ func (l *List[T]) Prepend(node *Node[T]) {
 }
 
 func (l *List[T]) InsertAt(index int, node *Node[T]) error {
-	// Return error if index is larger than legth of list.
-	if index > l.length {
-		return IndexOutOfRangeError
+	if err := l.validateInsertIndex(index); err != nil {
+		return err
 	}
 
 	// If index is 0 set node as new head of list and connect it to neighbours with new next and previous links.
@@ -128,8 +157,8 @@ func (l *List[T]) InsertAt(index int, node *Node[T]) error {
 
 // GetByIndex retrieves node by index. Return error if index is out of range. Index of first node is 0.
 func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
-	if index >= l.length {
-		return nil, IndexOutOfRangeError
+	if err := l.validateGetIndex(index); err != nil {
+		return nil, err
 	}
 
 	// Calculate index in the middle of the list.
@@ -154,12 +183,15 @@ func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
 
 // Swap changes places of nodes on passed positions.
 func (l *List[T]) Swap(i, j int) error {
-	// Return error if any index is out of range.
-	if i >= l.length || j >= l.length {
-		return IndexOutOfRangeError
+	if err := l.validateGetIndex(i); err != nil {
+		return err
 	}
 
-	// Do nothing and return if length of lsit is 1
+	if err := l.validateGetIndex(j); err != nil {
+		return err
+	}
+
+	// Do nothing and return if indexes are the same or length of list is 1.
 	if i == j || l.length == 1 {
 		return nil
 	}
