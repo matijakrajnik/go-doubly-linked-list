@@ -26,10 +26,17 @@ func TestHead(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, nodes[2], list.Head())
 
-	assert.Nil(t, err)
 	err = list.InsertAt(0, nodes[3])
 	assert.Nil(t, err)
 	assert.Equal(t, nodes[3], list.Head())
+
+	err = list.DeleteAt(0)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3].next, list.Head())
+
+	err = list.DeleteAt(1)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3].next, list.Head())
 }
 
 func TestTail(t *testing.T) {
@@ -55,6 +62,14 @@ func TestTail(t *testing.T) {
 	err = list.InsertAt(3, nodes[3])
 	assert.Nil(t, err)
 	assert.Equal(t, nodes[3], list.Tail())
+
+	err = list.DeleteAt(0)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3], list.Tail())
+
+	err = list.DeleteAt(2)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3].previous, list.Tail())
 }
 
 func TestLength(t *testing.T) {
@@ -80,6 +95,24 @@ func TestLength(t *testing.T) {
 
 	list.InsertAt(5, nodes[5])
 	assert.Equal(t, 6, list.Length())
+
+	_ = list.DeleteAt(5)
+	assert.Equal(t, 5, list.Length())
+
+	_ = list.DeleteAt(4)
+	assert.Equal(t, 4, list.Length())
+
+	_ = list.DeleteAt(3)
+	assert.Equal(t, 3, list.Length())
+
+	_ = list.DeleteAt(2)
+	assert.Equal(t, 2, list.Length())
+
+	_ = list.DeleteAt(1)
+	assert.Equal(t, 1, list.Length())
+
+	_ = list.DeleteAt(0)
+	assert.Equal(t, 0, list.Length())
 }
 
 func TestPrint(t *testing.T) {
@@ -453,4 +486,77 @@ func TestSwapNegativeIndex(t *testing.T) {
 	err = list.Swap(3, -1)
 	assert.Equal(t, &NegativeIndexError{Index: -1}, err)
 
+}
+
+func TestDeleteAt(t *testing.T) {
+	list, nodes := testListInt(5)
+
+	err := list.DeleteAt(2)
+	assert.Nil(t, err)
+	retrieved, err := list.GetByIndex(0)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[0], retrieved)
+	retrieved, err = list.GetByIndex(1)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[1], retrieved)
+	retrieved, err = list.GetByIndex(2)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3], retrieved)
+	retrieved, err = list.GetByIndex(3)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[4], retrieved)
+
+	err = list.DeleteAt(0)
+	assert.Nil(t, err)
+	retrieved, err = list.GetByIndex(0)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[1], retrieved)
+	retrieved, err = list.GetByIndex(1)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3], retrieved)
+	retrieved, err = list.GetByIndex(2)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[4], retrieved)
+
+	err = list.DeleteAt(2)
+	assert.Nil(t, err)
+	retrieved, err = list.GetByIndex(0)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[1], retrieved)
+	retrieved, err = list.GetByIndex(1)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[3], retrieved)
+
+	err = list.DeleteAt(1)
+	assert.Nil(t, err)
+	retrieved, err = list.GetByIndex(0)
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[1], retrieved)
+
+	err = list.DeleteAt(0)
+	assert.Nil(t, err)
+	retrieved, err = list.GetByIndex(0)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 0}, err)
+	assert.Nil(t, retrieved)
+}
+
+func TestDeleteAtLastNode(t *testing.T) {
+	list, _ := testListInt(1)
+
+	err := list.DeleteAt(0)
+	assert.Nil(t, err)
+	assert.Nil(t, list.head)
+	assert.Nil(t, list.tail)
+}
+
+func TestDeleteAtOutOfRange(t *testing.T) {
+	list := &List[int]{}
+
+	err := list.DeleteAt(0)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 0}, err)
+
+	list, _ = testListInt(5)
+
+	err = list.DeleteAt(5)
+	assert.Equal(t, &IndexOutOfRangeError{Index: 5}, err)
 }

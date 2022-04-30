@@ -50,7 +50,7 @@ func (l *List[T]) validateNegativeIndex(index int) error {
 	return nil
 }
 
-func (l *List[T]) validateGetIndex(index int) error {
+func (l *List[T]) validateExistingIndex(index int) error {
 	if err := l.validateNegativeIndex(index); err != nil {
 		return err
 	}
@@ -63,7 +63,7 @@ func (l *List[T]) validateGetIndex(index int) error {
 	return nil
 }
 
-func (l *List[T]) validateInsertIndex(index int) error {
+func (l *List[T]) validateInsertableIndex(index int) error {
 	if err := l.validateNegativeIndex(index); err != nil {
 		return err
 	}
@@ -114,7 +114,7 @@ func (l *List[T]) Prepend(node *Node[T]) {
 
 // InsertAt inserts now node at specific position.
 func (l *List[T]) InsertAt(index int, node *Node[T]) error {
-	if err := l.validateInsertIndex(index); err != nil {
+	if err := l.validateInsertableIndex(index); err != nil {
 		return err
 	}
 
@@ -158,7 +158,7 @@ func (l *List[T]) InsertAt(index int, node *Node[T]) error {
 
 // GetByIndex retrieves node by index. Return error if index is out of range. Index of first node is 0.
 func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
-	if err := l.validateGetIndex(index); err != nil {
+	if err := l.validateExistingIndex(index); err != nil {
 		return nil, err
 	}
 
@@ -196,11 +196,11 @@ func (l *List[T]) GetByValue(value T) int {
 
 // Swap changes places of nodes on passed positions.
 func (l *List[T]) Swap(i, j int) error {
-	if err := l.validateGetIndex(i); err != nil {
+	if err := l.validateExistingIndex(i); err != nil {
 		return err
 	}
 
-	if err := l.validateGetIndex(j); err != nil {
+	if err := l.validateExistingIndex(j); err != nil {
 		return err
 	}
 
@@ -306,4 +306,35 @@ func (l *List[T]) swap(node1, node2 *Node[T]) {
 		node2Next.previous = node1
 	}
 	node2Prev.next = node1
+}
+
+// DeleteAt deletes node at given index.
+func (l *List[T]) DeleteAt(index int) error {
+	node, err := l.GetByIndex(index)
+
+	if err != nil {
+		return err
+	}
+
+	// Define variables where outer neihgbours of both nodes will be saved.
+	var nodePrev *Node[T]
+	var nodeNext *Node[T]
+
+	if node != l.head {
+		nodePrev = node.previous
+		nodePrev.next = node.next
+	} else {
+		l.head = node.next
+	}
+
+	if node != l.tail {
+		nodeNext = node.next
+		nodeNext.previous = node.previous
+	} else {
+		l.tail = node.previous
+	}
+
+	l.length--
+
+	return nil
 }
