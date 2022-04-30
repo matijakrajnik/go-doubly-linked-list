@@ -55,7 +55,7 @@ func (l *List[T]) validateGetIndex(index int) error {
 		return err
 	}
 
-	// Return error if index is larger than legth of list.
+	// Return error if index is larger than or equal to legth of list.
 	if index >= l.length {
 		return &IndexOutOfRangeError{Index: index}
 	}
@@ -112,6 +112,7 @@ func (l *List[T]) Prepend(node *Node[T]) {
 	l.length++
 }
 
+// InsertAt inserts now node at specific position.
 func (l *List[T]) InsertAt(index int, node *Node[T]) error {
 	if err := l.validateInsertIndex(index); err != nil {
 		return err
