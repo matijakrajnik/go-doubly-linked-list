@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-type List[T any] struct {
+type List[T comparable] struct {
 	head   *Node[T] // Pointer to head (first node in list).
 	tail   *Node[T] // Pointer to tail (last node in list).
 	length int      // Number of nodes in list.

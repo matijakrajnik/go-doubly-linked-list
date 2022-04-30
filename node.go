@@ -3,7 +3,7 @@
 package godll
 
 // Node represent node in linked list.
-type Node[T any] struct {
+type Node[T comparable] struct {
 	Value    T        // Value of node.
 	next     *Node[T] // Pointer to next node.
 	previous *Node[T] // Pointer to previous node.
@@ -20,6 +20,6 @@ func (n *Node[T]) Previous() *Node[T] {
 }
 
 // NewNode cretes new node with passed value. Return pointer to newly created node.
-func NewNode[T any](value T) *Node[T] {
+func NewNode[T comparable](value T) *Node[T] {
 	return &Node[T]{Value: value}
 }
