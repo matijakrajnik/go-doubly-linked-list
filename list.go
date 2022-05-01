@@ -34,10 +34,11 @@ func (l *List[T]) Print(w io.Writer) {
 		return
 	}
 	current := l.head
-	for i := 1; i <= l.length; i++ {
+	for current != l.tail {
 		fmt.Fprintf(w, "%v ", current.Value)
 		current = current.next
 	}
+	fmt.Fprintf(w, "%v ", l.tail.Value)
 	fmt.Fprintf(w, "\n")
 }
 
