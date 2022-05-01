@@ -426,6 +426,42 @@ func TestGetByValueNotfoundStruct(t *testing.T) {
 	assert.Equal(t, -1, index)
 }
 
+func TestGetAllValues(t *testing.T) {
+	list := &List[int]{}
+	nodes := testNodesInt(3)
+
+	value := 123
+	list.Append(NewNode(value))
+	list.Append(nodes[0])
+	list.Append(nodes[1])
+
+	indexes := list.GetAllValues(value)
+	assert.Equal(t, []int{0}, indexes)
+
+	list.Append(NewNode(value))
+	list.Append(nodes[2])
+	list.Append(NewNode(value))
+
+	indexes = list.GetAllValues(value)
+	assert.Equal(t, []int{0, 3, 5}, indexes)
+}
+
+func TestGetAllValuesNotFound(t *testing.T) {
+	list := &List[int]{}
+	nodes := testNodesInt(3)
+	value := 123
+
+	indexes := list.GetAllValues(value)
+	assert.Empty(t, indexes)
+
+	for _, node := range nodes {
+		list.Append(node)
+	}
+
+	indexes = list.GetAllValues(value)
+	assert.Empty(t, indexes)
+}
+
 func TestSwap(t *testing.T) {
 	list, nodes := testListInt(5)
 

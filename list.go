@@ -194,6 +194,21 @@ func (l *List[T]) GetByValue(value T) int {
 	return -1
 }
 
+// GetAllValues return slice with indexes of all nodes with passed value. Returns empty slice if there is no node with given value in List.
+func (l *List[T]) GetAllValues(value T) []int {
+	s := make([]int, 0)
+
+	current := l.head
+	for i := 0; i < l.length; i++ {
+		if current.Value == value {
+			s = append(s, i)
+		}
+		current = current.next
+	}
+
+	return s
+}
+
 // Swap changes places of nodes on passed positions.
 func (l *List[T]) Swap(i, j int) error {
 	if err := l.validateExistingIndex(i); err != nil {
