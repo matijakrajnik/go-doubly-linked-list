@@ -4,6 +4,7 @@ import "fmt"
 
 // Used only for testing.
 type PersonTest struct {
+	ID        int
 	FirstName string
 	LastName  string
 }

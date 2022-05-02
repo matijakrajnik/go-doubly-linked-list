@@ -186,8 +186,12 @@ func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
 	return current, nil
 }
 
-// GetByValue returns index of node with passed value. Returns -1 if there is no node with given value in List.
+// GetByValue returns index of node with passed value using compare function compFunc.
+// If compFunc is nil, use default comparison with "==". Returns -1 if there is no node with given value in List.
 func (l *List[T]) GetByValue(value T, compFunc fun[T]) int {
+	if compFunc == nil {
+		compFunc = func(v1, v2 T) bool { return v1 == v2 }
+	}
 	current := l.head
 	for i := 0; i < l.length; i++ {
 		if compFunc(current.Value, value) {
@@ -198,13 +202,17 @@ func (l *List[T]) GetByValue(value T, compFunc fun[T]) int {
 	return -1
 }
 
-// GetAllValues return slice with indexes of all nodes with passed value. Returns empty slice if there is no node with given value in List.
-func (l *List[T]) GetAllValues(value T) []int {
+// GetAllValues return slice with indexes of all nodes with passed value using compare function compFunc.
+// If compFunc is nil, use default comparison with "==". Returns empty slice if there is no node with given value in List.
+func (l *List[T]) GetAllValues(value T, compFunc fun[T]) []int {
+	if compFunc == nil {
+		compFunc = func(v1, v2 T) bool { return v1 == v2 }
+	}
 	s := make([]int, 0)
 
 	current := l.head
 	for i := 0; i < l.length; i++ {
-		if current.Value == value {
+		if compFunc(current.Value, value) {
 			s = append(s, i)
 		}
 		current = current.next
@@ -358,9 +366,10 @@ func (l *List[T]) DeleteAt(index int) error {
 	return nil
 }
 
-// Sort sorts nodes in List using Merge Sort algorithm.
+// Sort sorts nodes in List using Merge Sort algorithm with sorting function sortFunc.
+// If sortFunc is nil, use default comparison with "<".
 func (l *List[T]) Sort(sortFunc fun[T]) {
-	// Call recursive function to sorte list using merge sort algorithm.
+	// Call recursive function to sort list using merge sort algorithm.
 	l.head = sort(l.head, sortFunc)
 
 	// Iterate through sorted list to find new tail.
