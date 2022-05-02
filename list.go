@@ -186,39 +186,39 @@ func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
 	return current, nil
 }
 
-// GetByValue returns index of node with passed value using compare function compFunc.
-// If compFunc is nil, use default comparison with "==". Returns -1 if there is no node with given value in List.
-func (l *List[T]) GetByValue(value T, compFunc fun[T]) int {
+// GetByValue returns index of node and node with passed value using compare function compFunc.
+// If compFunc is nil, use default comparison with "==". Returns -1 and nil if there is no node with given value in List.
+func (l *List[T]) GetByValue(value T, compFunc fun[T]) (int, *Node[T]) {
 	if compFunc == nil {
 		compFunc = func(v1, v2 T) bool { return v1 == v2 }
 	}
 	current := l.head
 	for i := 0; i < l.length; i++ {
 		if compFunc(current.Value, value) {
-			return i
+			return i, current
 		}
 		current = current.next
 	}
-	return -1
+	return -1, nil
 }
 
-// GetAllValues return slice with indexes of all nodes with passed value using compare function compFunc.
-// If compFunc is nil, use default comparison with "==". Returns empty slice if there is no node with given value in List.
-func (l *List[T]) GetAllValues(value T, compFunc fun[T]) []int {
+// GetAllValues return map with indexes and nodes of all nodes with passed value using compare function compFunc.
+// If compFunc is nil, use default comparison with "==". Returns empty map if there is no node with given value in List.
+func (l *List[T]) GetAllValues(value T, compFunc fun[T]) map[int]*Node[T] {
 	if compFunc == nil {
 		compFunc = func(v1, v2 T) bool { return v1 == v2 }
 	}
-	s := make([]int, 0)
+	m := make(map[int]*Node[T], 0)
 
 	current := l.head
 	for i := 0; i < l.length; i++ {
 		if compFunc(current.Value, value) {
-			s = append(s, i)
+			m[i] = current
 		}
 		current = current.next
 	}
 
-	return s
+	return m
 }
 
 // Swap changes places of nodes on passed positions.
