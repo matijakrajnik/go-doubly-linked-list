@@ -187,10 +187,10 @@ func (l *List[T]) GetByIndex(index int) (*Node[T], error) {
 }
 
 // GetByValue returns index of node with passed value. Returns -1 if there is no node with given value in List.
-func (l *List[T]) GetByValue(value T) int {
+func (l *List[T]) GetByValue(value T, compFunc fun[T]) int {
 	current := l.head
 	for i := 0; i < l.length; i++ {
-		if current.Value == value {
+		if compFunc(current.Value, value) {
 			return i
 		}
 		current = current.next

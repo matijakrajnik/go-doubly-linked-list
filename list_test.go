@@ -340,18 +340,18 @@ func TestGetByValueInt(t *testing.T) {
 	list, nodes := testListInt(5)
 
 	for i, node := range nodes {
-		index := list.GetByValue(node.Value)
+		index := list.GetByValue(node.Value, func(v1, v2 int) bool { return v1 == v2 })
 		assert.Equal(t, i, index)
 	}
 }
 
 func TestGetByValueNotfoundInt(t *testing.T) {
 	list := &List[int]{}
-	index := list.GetByValue(123)
+	index := list.GetByValue(123, func(v1, v2 int) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 
 	list, _ = testListInt(5)
-	index = list.GetByValue(123)
+	index = list.GetByValue(123, func(v1, v2 int) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 }
 
@@ -359,18 +359,18 @@ func TestGetByValueFloat64(t *testing.T) {
 	list, nodes := testListFloat64(5)
 
 	for i, node := range nodes {
-		index := list.GetByValue(node.Value)
+		index := list.GetByValue(node.Value, func(v1, v2 float64) bool { return v1 == v2 })
 		assert.Equal(t, i, index)
 	}
 }
 
 func TestGetByValueNotfoundFloat64(t *testing.T) {
 	list := &List[float64]{}
-	index := list.GetByValue(1.23)
+	index := list.GetByValue(1.23, func(v1, v2 float64) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 
 	list, _ = testListFloat64(5)
-	index = list.GetByValue(1.23)
+	index = list.GetByValue(1.23, func(v1, v2 float64) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 }
 
@@ -378,18 +378,18 @@ func TestGetByValueString(t *testing.T) {
 	list, nodes := testListString(5)
 
 	for i, node := range nodes {
-		index := list.GetByValue(node.Value)
+		index := list.GetByValue(node.Value, func(v1, v2 string) bool { return v1 == v2 })
 		assert.Equal(t, i, index)
 	}
 }
 
 func TestGetByValueNotfoundString(t *testing.T) {
 	list := &List[string]{}
-	index := list.GetByValue("NOT FOUND")
+	index := list.GetByValue("NOT FOUND", func(v1, v2 string) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 
 	list, _ = testListString(5)
-	index = list.GetByValue("NOT FOUND")
+	index = list.GetByValue("NOT FOUND", func(v1, v2 string) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 }
 
@@ -397,7 +397,7 @@ func TestGetByValueStruct(t *testing.T) {
 	list, nodes := testListStruct(5)
 
 	for i, node := range nodes {
-		index := list.GetByValue(node.Value)
+		index := list.GetByValue(node.Value, func(v1, v2 PersonTest) bool { return v1 == v2 })
 		assert.Equal(t, i, index)
 	}
 
@@ -406,7 +406,7 @@ func TestGetByValueStruct(t *testing.T) {
 	var p2 PersonTest
 
 	list.Append(NewNode(p1))
-	i := list.GetByValue(p2)
+	i := list.GetByValue(p2, func(v1, v2 PersonTest) bool { return v1 == v2 })
 	assert.Equal(t, -1, i)
 }
 
@@ -414,15 +414,15 @@ func TestGetByValueNotfoundStruct(t *testing.T) {
 	person := PersonTest{FirstName: "Bruce", LastName: "Wayne"}
 
 	list := &List[PersonTest]{}
-	index := list.GetByValue(person)
+	index := list.GetByValue(person, func(v1, v2 PersonTest) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 
 	list, _ = testListStruct(5)
-	index = list.GetByValue(person)
+	index = list.GetByValue(person, func(v1, v2 PersonTest) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 
 	var empty PersonTest
-	index = list.GetByValue(empty)
+	index = list.GetByValue(empty, func(v1, v2 PersonTest) bool { return v1 == v2 })
 	assert.Equal(t, -1, index)
 }
 
