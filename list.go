@@ -7,6 +7,9 @@ import (
 	"io"
 )
 
+// Function used to compare node values.
+type fun[T comparable] func(v1, v2 T) bool
+
 type List[T comparable] struct {
 	head   *Node[T] // Pointer to head (first node in list).
 	tail   *Node[T] // Pointer to tail (last node in list).
@@ -353,4 +356,77 @@ func (l *List[T]) DeleteAt(index int) error {
 	l.length--
 
 	return nil
+}
+
+// Sort sorts nodes in List using Merge Sort algorithm.
+func (l *List[T]) Sort(sortFunc fun[T]) {
+	// Call recursive function to sorte list using merge sort algorithm.
+	l.head = sort(l.head, sortFunc)
+
+	// Iterate through sorted list to find new tail.
+	current := l.head
+	for current != nil && current.next != nil {
+		current = current.next
+	}
+	l.tail = current
+}
+
+func sort[T comparable](head *Node[T], sortFunc fun[T]) *Node[T] {
+	// If list is empty or it contains only one node, return passed head.
+	if head == nil || head.next == nil {
+		return head
+	}
+
+	// Find middle node in list.
+	middle := split(head, sortFunc)
+
+	// Sort recursively from head and middle node.
+	head = sort(head, sortFunc)
+	middle = sort(middle, sortFunc)
+
+	// Call recursive merge function to merge sorted lists.
+	return merge(head, middle, sortFunc)
+}
+
+func split[T comparable](node *Node[T], sortFunc fun[T]) *Node[T] {
+	// Iterate with one node twice the speed to find middle one.
+	fast, slow := node, node
+	for fast.next != nil && fast.next.next != nil {
+		fast = fast.next.next
+		slow = slow.next
+	}
+	// Set next of middle node as head of second list.
+	middle := slow.next
+	// Set middle node as tail for first list.
+	slow.next = nil
+
+	return middle
+}
+
+func merge[T comparable](node1, node2 *Node[T], sortFunc fun[T]) *Node[T] {
+	// If one list is empty, return the other one.
+	if node1 == nil {
+		return node2
+	}
+	if node2 == nil {
+		return node1
+	}
+
+	// If sorting function returns true exclude head from first list
+	// and merge recursively on remainder of first list and second list.
+	// Return element excluded from list.
+	if sortFunc(node1.Value, node2.Value) {
+		node1.next = merge(node1.next, node2, sortFunc)
+		node1.next.previous = node1
+		node1.previous = nil
+		return node1
+	}
+
+	// If sorting function returns false exclude head from second list
+	// and merge recursively on first list and remainder of second list.
+	// Return element excluded from list.
+	node2.next = merge(node1, node2.next, sortFunc)
+	node2.next.previous = node2
+	node2.previous = nil
+	return node2
 }

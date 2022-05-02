@@ -596,3 +596,97 @@ func TestDeleteAtOutOfRange(t *testing.T) {
 	err = list.DeleteAt(5)
 	assert.Equal(t, &IndexOutOfRangeError{Index: 5}, err)
 }
+
+func TestSortAsc(t *testing.T) {
+	list := &List[int]{}
+	nodes := testNodesInt(5)
+
+	list.Append(nodes[3])
+	list.Append(nodes[1])
+	list.Append(nodes[2])
+	list.Append(nodes[4])
+	list.Append(nodes[0])
+
+	list.Sort(func(v1, v2 int) bool { return v1 < v2 })
+	assert.Equal(t, list.length, 5)
+	for i, node := range nodes {
+		retrieved, err := list.GetByIndex(i)
+		assert.Nil(t, err)
+		assert.Equal(t, node.Value, retrieved.Value)
+		if i > 0 {
+			assert.Equal(t, nodes[i-1], node.previous)
+		}
+		if i < len(nodes)-1 {
+			assert.Equal(t, nodes[i+1], node.next)
+		}
+	}
+	assert.Equal(t, list.head, nodes[0])
+	assert.Equal(t, list.tail, nodes[4])
+}
+
+func TestSortDesc(t *testing.T) {
+	list := &List[int]{}
+	nodes := testNodesInt(6)
+
+	list.Append(nodes[3])
+	list.Append(nodes[1])
+	list.Append(nodes[2])
+	list.Append(nodes[5])
+	list.Append(nodes[4])
+	list.Append(nodes[0])
+
+	list.Sort(func(v1, v2 int) bool { return v1 < v2 })
+	assert.Equal(t, list.length, 6)
+	for i := len(nodes) - 1; i <= 0; i-- {
+		node := nodes[i]
+		retrieved, err := list.GetByIndex(i)
+		assert.Nil(t, err)
+		assert.Equal(t, node.Value, retrieved.Value)
+		if i > 0 {
+			assert.Equal(t, nodes[i-1], node.previous)
+		}
+		if i < len(nodes)-1 {
+			assert.Equal(t, nodes[i+1], node.next)
+		}
+	}
+	assert.Equal(t, list.head, nodes[0])
+	assert.Equal(t, list.tail, nodes[5])
+}
+
+func TestSortAlreadySorted(t *testing.T) {
+	list, nodes := testListInt(5)
+
+	list.Sort(func(v1, v2 int) bool { return v1 < v2 })
+	assert.Equal(t, list.length, 5)
+	for i, node := range nodes {
+		retrieved, err := list.GetByIndex(i)
+		assert.Nil(t, err)
+		assert.Equal(t, node.Value, retrieved.Value)
+		if i > 0 {
+			assert.Equal(t, nodes[i-1], node.previous)
+		}
+		if i < len(nodes)-1 {
+			assert.Equal(t, nodes[i+1], node.next)
+		}
+	}
+	assert.Equal(t, list.head, nodes[0])
+	assert.Equal(t, list.tail, nodes[4])
+}
+
+func TestSortSinleNode(t *testing.T) {
+	list, nodes := testListInt(1)
+
+	list.Sort(func(v1, v2 int) bool { return v1 < v2 })
+	assert.Equal(t, list.length, 1)
+	assert.Equal(t, list.head, nodes[0])
+	assert.Equal(t, list.tail, nodes[0])
+}
+
+func TestSortEmpty(t *testing.T) {
+	list := &List[int]{}
+
+	list.Sort(func(v1, v2 int) bool { return v1 < v2 })
+	assert.Equal(t, list.length, 0)
+	assert.Nil(t, list.head)
+	assert.Nil(t, list.tail)
+}
