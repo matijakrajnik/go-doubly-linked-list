@@ -38,10 +38,10 @@ func (l *List[T]) Print(w io.Writer) {
 	}
 	current := l.head
 	for current != l.tail {
-		fmt.Fprintf(w, "%v ", current.Value)
+		fmt.Fprintf(w, "%+v ", current.Value)
 		current = current.next
 	}
-	fmt.Fprintf(w, "%v ", l.tail.Value)
+	fmt.Fprintf(w, "%+v ", l.tail.Value)
 	fmt.Fprintf(w, "\n")
 }
 
