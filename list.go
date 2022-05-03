@@ -420,7 +420,6 @@ func (l *List[T]) deleteNode(node *Node[T]) {
 }
 
 // Sort sorts nodes in List using Merge Sort algorithm with sorting function sortFunc.
-// If sortFunc is nil, use default comparison with "<".
 func (l *List[T]) Sort(sortFunc fun[T]) {
 	// Call recursive function to sort list using merge sort algorithm.
 	l.head = sort(l.head, sortFunc)
