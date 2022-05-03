@@ -343,25 +343,7 @@ func (l *List[T]) DeleteAt(index int) error {
 		return err
 	}
 
-	// Define variables where outer neihgbours of both nodes will be saved.
-	var nodePrev *Node[T]
-	var nodeNext *Node[T]
-
-	if node != l.head {
-		nodePrev = node.previous
-		nodePrev.next = node.next
-	} else {
-		l.head = node.next
-	}
-
-	if node != l.tail {
-		nodeNext = node.next
-		nodeNext.previous = node.previous
-	} else {
-		l.tail = node.previous
-	}
-
-	l.length--
+	l.deleteNode(node)
 
 	return nil
 }
@@ -385,6 +367,29 @@ func (l *List[T]) DeleteNode(node *Node[T]) error {
 	}
 
 	return &NodeNotFoundError[T]{Node: node}
+}
+
+// DeleteValues deletes all nodes with passed value using compare function compFunc.
+// If compFunc is nil, use default comparison with "==". Return number of deleted nodes.
+func (l *List[T]) DeleteValues(value T, compFunc fun[T]) int {
+	if l.length == 0 {
+		return 0
+	}
+
+	if compFunc == nil {
+		compFunc = func(v1, v2 T) bool { return v1 == v2 }
+	}
+
+	c := 0
+	current := l.head
+	for (current != nil && current.next != nil) || (current != nil && current == l.tail) {
+		if compFunc(current.Value, value) {
+			l.deleteNode(current)
+			c++
+		}
+		current = current.next
+	}
+	return c
 }
 
 // Delete found node.

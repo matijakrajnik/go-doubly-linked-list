@@ -685,7 +685,99 @@ func TestDeleteNodeLast(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Nil(t, list.tail)
 	assert.Nil(t, list.head)
+}
 
+func TestDeleteValues(t *testing.T) {
+	list := &List[int]{}
+	node := &Node[int]{}
+
+	deleted := list.DeleteValues(node.Value, nil)
+	assert.Equal(t, 0, deleted)
+
+	list, nodes := testListInt(3)
+	list.InsertAt(2, NewNode(nodes[1].Value))
+
+	deleted = list.DeleteValues(nodes[1].Value, nil)
+	assert.Equal(t, 2, deleted)
+	assert.Equal(t, 2, list.length)
+	assert.Equal(t, nodes[0], list.head)
+	assert.Equal(t, nodes[2], list.tail)
+	assert.Equal(t, nodes[2], list.head.next)
+	assert.Equal(t, nodes[0], list.tail.previous)
+	assert.Nil(t, list.head.previous)
+	assert.Nil(t, list.tail.next)
+}
+
+func TestDeleteValuesHead(t *testing.T) {
+	list, nodes := testListInt(3)
+
+	deleted := list.DeleteValues(nodes[0].Value, nil)
+	assert.Equal(t, 1, deleted)
+	assert.Equal(t, nodes[1], list.head)
+	assert.Equal(t, nodes[2], list.head.next)
+	assert.Nil(t, list.head.previous)
+}
+
+func TestDeleteValuesTail(t *testing.T) {
+	list, nodes := testListInt(3)
+
+	deleted := list.DeleteValues(nodes[2].Value, nil)
+	assert.Equal(t, 1, deleted)
+	assert.Equal(t, nodes[1], list.tail)
+	assert.Equal(t, nodes[0], list.tail.previous)
+	assert.Nil(t, list.tail.next)
+}
+
+func TestDeleteValuesHeadAndTail(t *testing.T) {
+	list, nodes := testListInt(3)
+	list.Append(NewNode(list.head.Value))
+
+	deleted := list.DeleteValues(nodes[0].Value, nil)
+	assert.Equal(t, 2, deleted)
+	assert.Equal(t, nodes[1], list.head)
+	assert.Equal(t, nodes[2], list.head.next)
+	assert.Nil(t, list.head.previous)
+	assert.Equal(t, nodes[2], list.tail)
+	assert.Equal(t, nodes[1], list.tail.previous)
+	assert.Nil(t, list.tail.next)
+}
+
+func TestDeleteValuesLastNode(t *testing.T) {
+	list, nodes := testListInt(1)
+
+	deleted := list.DeleteValues(nodes[0].Value, nil)
+	assert.Equal(t, 1, deleted)
+	assert.Equal(t, 0, list.length)
+	assert.Nil(t, list.head)
+	assert.Nil(t, list.tail)
+}
+
+func TestDeleteValuesAllNodes(t *testing.T) {
+	list := &List[int]{}
+	n, value := 5, 123
+	for i := 0; i < n; i++ {
+		list.Append(NewNode(value))
+	}
+
+	deleted := list.DeleteValues(value, nil)
+	assert.Equal(t, n, deleted)
+	assert.Equal(t, 0, list.length)
+	assert.Nil(t, list.head)
+	assert.Nil(t, list.tail)
+}
+
+func TestDeleteValuesCustomFunc(t *testing.T) {
+	list, nodes := testListInt(5)
+
+	deleted := list.DeleteValues(nodes[2].Value, func(v1, v2 int) bool { return v1 < v2 })
+	assert.Equal(t, 2, deleted)
+	assert.Equal(t, 3, list.length)
+	assert.Equal(t, nodes[2], list.head)
+	assert.Equal(t, nodes[4], list.tail)
+	assert.Equal(t, nodes[3], list.head.next)
+	assert.Equal(t, nodes[3], list.tail.previous)
+	assert.Nil(t, list.head.previous)
+	assert.Nil(t, list.tail.next)
 }
 
 func TestSortAsc(t *testing.T) {
