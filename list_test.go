@@ -125,17 +125,17 @@ func TestPrint(t *testing.T) {
 	output.Reset()
 	list.Append(NewNode(4))
 	list.Print(&output)
-	assert.Equal(t, "4 \n", output.String())
+	assert.Equal(t, "4\n", output.String())
 
 	output.Reset()
 	list.Append(NewNode(23))
 	list.Print(&output)
-	assert.Equal(t, "4 23 \n", output.String())
+	assert.Equal(t, "4 23\n", output.String())
 
 	output.Reset()
 	list.Append(NewNode(1))
 	list.Print(&output)
-	assert.Equal(t, "4 23 1 \n", output.String())
+	assert.Equal(t, "4 23 1\n", output.String())
 }
 
 func TestAppendInt(t *testing.T) {
