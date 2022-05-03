@@ -15,7 +15,7 @@ type NegativeIndexError struct {
 }
 
 func (e *NegativeIndexError) Error() string {
-	return fmt.Sprintf("Index %v is a negative number!", e.Index)
+	return fmt.Sprintf("Index %v is a negative number!\n", e.Index)
 }
 
 type NodeNotFoundError[T comparable] struct {
@@ -23,5 +23,5 @@ type NodeNotFoundError[T comparable] struct {
 }
 
 func (e *NodeNotFoundError[T]) Error() string {
-	return fmt.Sprintf("Node not found: %+v", e.Node)
+	return fmt.Sprintf("Node not found: %+v\n", e.Node)
 }
