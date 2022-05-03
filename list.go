@@ -348,7 +348,7 @@ func (l *List[T]) DeleteAt(index int) error {
 	return nil
 }
 
-// DeleteNode deletes passed ndoe from list.
+// DeleteNode deletes passed node from list.
 func (l *List[T]) DeleteNode(node *Node[T]) error {
 	if node == nil {
 		return nil
