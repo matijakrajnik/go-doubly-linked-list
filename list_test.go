@@ -687,6 +687,21 @@ func TestDeleteNodeLast(t *testing.T) {
 	assert.Nil(t, list.head)
 }
 
+func TestDeleteNodeNil(t *testing.T) {
+	list, _ := testListInt(3)
+
+	err := list.DeleteNode(nil)
+	assert.Nil(t, err)
+}
+
+func TestDeleteNodeNotFound(t *testing.T) {
+	list, _ := testListInt(3)
+
+	node := NewNode(123)
+	err := list.DeleteNode(node)
+	assert.Equal(t, &NodeNotFoundError[int]{Node: node}, err)
+}
+
 func TestDeleteValues(t *testing.T) {
 	list := &List[int]{}
 	node := &Node[int]{}

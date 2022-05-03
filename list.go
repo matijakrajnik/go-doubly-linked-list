@@ -358,7 +358,7 @@ func (l *List[T]) DeleteNode(node *Node[T]) error {
 	}
 
 	current := l.head
-	for current.next != nil || current == l.tail {
+	for (current != nil && current.next != nil) || current == l.tail {
 		if current == node {
 			l.deleteNode(node)
 			return nil
