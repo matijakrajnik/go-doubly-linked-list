@@ -17,3 +17,11 @@ type NegativeIndexError struct {
 func (e *NegativeIndexError) Error() string {
 	return fmt.Sprintf("Index %v is a negative number!", e.Index)
 }
+
+type NodeNotFoundError[T comparable] struct {
+	Node *Node[T]
+}
+
+func (e *NodeNotFoundError[T]) Error() string {
+	return fmt.Sprintf("Node not found: %+v", e.Node)
+}

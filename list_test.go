@@ -638,6 +638,56 @@ func TestDeleteAtOutOfRange(t *testing.T) {
 	assert.Equal(t, &IndexOutOfRangeError{Index: 5}, err)
 }
 
+func TestDeleteNode(t *testing.T) {
+	list := &List[int]{}
+	node := &Node[int]{}
+
+	err := list.DeleteNode(node)
+	assert.Equal(t, &NodeNotFoundError[int]{Node: node}, err)
+
+	list, nodes := testListInt(3)
+
+	err = list.DeleteNode(nodes[1])
+	assert.Nil(t, err)
+	assert.Equal(t, 2, list.length)
+	assert.Equal(t, nodes[0], list.head)
+	assert.Equal(t, nodes[2], list.tail)
+	assert.Equal(t, nodes[2], list.head.next)
+	assert.Equal(t, nodes[0], list.tail.previous)
+	assert.Nil(t, list.head.previous)
+	assert.Nil(t, list.tail.next)
+}
+
+func TestDeleteNodeHead(t *testing.T) {
+	list, nodes := testListInt(3)
+
+	err := list.DeleteNode(nodes[0])
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[1], list.head)
+	assert.Equal(t, nodes[2], list.head.next)
+	assert.Nil(t, list.head.previous)
+}
+
+func TestDeleteNodeTail(t *testing.T) {
+	list, nodes := testListInt(3)
+
+	err := list.DeleteNode(nodes[2])
+	assert.Nil(t, err)
+	assert.Equal(t, nodes[1], list.tail)
+	assert.Equal(t, nodes[0], list.tail.previous)
+	assert.Nil(t, list.tail.next)
+}
+
+func TestDeleteNodeLast(t *testing.T) {
+	list, nodes := testListInt(1)
+
+	err := list.DeleteNode(nodes[0])
+	assert.Nil(t, err)
+	assert.Nil(t, list.tail)
+	assert.Nil(t, list.head)
+
+}
+
 func TestSortAsc(t *testing.T) {
 	list := &List[int]{}
 	nodes := testNodesInt(5)

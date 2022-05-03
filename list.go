@@ -366,6 +366,54 @@ func (l *List[T]) DeleteAt(index int) error {
 	return nil
 }
 
+// DeleteNode deletes passed ndoe from list.
+func (l *List[T]) DeleteNode(node *Node[T]) error {
+	if node == nil {
+		return nil
+	}
+	if l.length == 0 {
+		return &NodeNotFoundError[T]{Node: node}
+	}
+
+	current := l.head
+	for current.next != nil || current == l.tail {
+		if current == node {
+			l.deleteNode(node)
+			return nil
+		}
+		current = current.next
+	}
+
+	return &NodeNotFoundError[T]{Node: node}
+}
+
+// Delete found node.
+func (l *List[T]) deleteNode(node *Node[T]) {
+	defer func() { l.length-- }()
+	// If node is both head and tail, it is only node in the list.
+	if node == l.head && node == l.tail {
+		l.head, l.tail = nil, nil
+		return
+	}
+
+	// If node is head, move head to next node.
+	if node == l.head {
+		l.head = node.next
+		l.head.previous = nil
+		return
+	}
+
+	// If node is tail, move tail to previous node.
+	if node == l.tail {
+		l.tail = node.previous
+		l.tail.next = nil
+		return
+	}
+
+	node.next.previous = node.previous
+	node.previous.next = node.next
+}
+
 // Sort sorts nodes in List using Merge Sort algorithm with sorting function sortFunc.
 // If sortFunc is nil, use default comparison with "<".
 func (l *List[T]) Sort(sortFunc fun[T]) {
