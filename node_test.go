@@ -6,31 +6,33 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewNodeInt(t *testing.T) {
-	node := NewNode(8)
-	assert.Equal(t, 8, node.Value)
-	assert.Nil(t, node.Next())
-}
+func TestNewNode(t *testing.T) {
+	t.Run("Int", func(t *testing.T) {
+		node := NewNode(8)
+		assert.Equal(t, 8, node.Value)
+		assert.Nil(t, node.Next())
+	})
 
-func TestNewNodeFloat64(t *testing.T) {
-	node := NewNode(4.2)
-	assert.Equal(t, 4.2, node.Value)
-	assert.Nil(t, node.Next())
-}
+	t.Run("Float64", func(t *testing.T) {
+		node := NewNode(4.2)
+		assert.Equal(t, 4.2, node.Value)
+		assert.Nil(t, node.Next())
+	})
 
-func TestNewNodeString(t *testing.T) {
-	node := NewNode("Bruce Wayne")
-	assert.Equal(t, "Bruce Wayne", node.Value)
-	assert.Nil(t, node.Next())
-}
+	t.Run("String", func(t *testing.T) {
+		node := NewNode("Bruce Wayne")
+		assert.Equal(t, "Bruce Wayne", node.Value)
+		assert.Nil(t, node.Next())
+	})
 
-func TestNewNodeStruct(t *testing.T) {
-	person := PersonTest{FirstName: "Bruce", LastName: "Wayne"}
-	node := NewNode(person)
-	assert.Equal(t, person, node.Value)
-	assert.Equal(t, person.FirstName, node.Value.FirstName)
-	assert.Equal(t, person.LastName, node.Value.LastName)
-	assert.Nil(t, node.Next())
+	t.Run("Struct", func(t *testing.T) {
+		person := PersonTest{FirstName: "Bruce", LastName: "Wayne"}
+		node := NewNode(person)
+		assert.Equal(t, person, node.Value)
+		assert.Equal(t, person.FirstName, node.Value.FirstName)
+		assert.Equal(t, person.LastName, node.Value.LastName)
+		assert.Nil(t, node.Next())
+	})
 }
 
 func TestNext(t *testing.T) {
