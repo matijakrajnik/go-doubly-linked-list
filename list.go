@@ -82,11 +82,11 @@ func (l *List[T]) validateInsertableIndex(index int) error {
 
 // Append adds node to the end of the List.
 func (l *List[T]) Append(node *Node[T]) {
+	defer func() { l.length++ }()
 	// Set node as a head and tail if list is empty.
 	if l.length == 0 {
 		l.head = node
 		l.tail = node
-		l.length++
 		return
 	}
 
@@ -95,16 +95,15 @@ func (l *List[T]) Append(node *Node[T]) {
 	l.tail = node
 	node.previous = oldTail
 	oldTail.next = node
-	l.length++
 }
 
 // Prepend adds node to the beggining of the List.
 func (l *List[T]) Prepend(node *Node[T]) {
+	defer func() { l.length++ }()
 	// Set node as a head and tail if list is empty.
 	if l.length == 0 {
 		l.head = node
 		l.tail = node
-		l.length++
 		return
 	}
 
@@ -113,7 +112,6 @@ func (l *List[T]) Prepend(node *Node[T]) {
 	l.head = node
 	node.next = oldHead
 	oldHead.previous = node
-	l.length++
 }
 
 // InsertAt inserts now node at specific position.
@@ -121,6 +119,7 @@ func (l *List[T]) InsertAt(index int, node *Node[T]) error {
 	if err := l.validateInsertableIndex(index); err != nil {
 		return err
 	}
+	defer func() { l.length++ }()
 
 	// If index is 0 set node as new head of list and connect it to neighbours with new next and previous links.
 	// If length is 0, set node as tail also.
@@ -133,7 +132,6 @@ func (l *List[T]) InsertAt(index int, node *Node[T]) error {
 		if l.length == 0 {
 			l.tail = node
 		}
-		l.length++
 		return nil
 	}
 
@@ -142,7 +140,6 @@ func (l *List[T]) InsertAt(index int, node *Node[T]) error {
 		node.previous = l.tail
 		l.tail.next = node
 		l.tail = node
-		l.length++
 		return nil
 	}
 
@@ -156,7 +153,6 @@ func (l *List[T]) InsertAt(index int, node *Node[T]) error {
 	node.next = next
 	node.previous = current
 	next.previous = node
-	l.length++
 	return nil
 }
 
