@@ -336,6 +336,17 @@ func TestPrint(t *testing.T) {
 	})
 }
 
+func BenchmarkPrint(b *testing.B) {
+	var output bytes.Buffer
+	for _, tc := range benchmarkTestCases {
+		list, _ := testListInt(tc.n)
+		b.Run(tc.name, func(b *testing.B) {
+			list.Print(&output)
+		})
+		output.Reset()
+	}
+}
+
 func TestAppend(t *testing.T) {
 	t.Run("Int", func(t *testing.T) {
 		list, nodes := &List[int]{}, testNodesInt(5)
@@ -376,6 +387,15 @@ func TestAppend(t *testing.T) {
 	})
 }
 
+func BenchmarkAppend(b *testing.B) {
+	for _, tc := range benchmarkTestCases {
+		list, _ := testListInt(tc.n)
+		b.Run(tc.name, func(b *testing.B) {
+			list.Append(NewNode(tc.n + 1))
+		})
+	}
+}
+
 func TestPrepend(t *testing.T) {
 	t.Run("Int", func(t *testing.T) {
 		list, nodes := &List[int]{}, testNodesInt(5)
@@ -414,6 +434,15 @@ func TestPrepend(t *testing.T) {
 			assert.Equal(t, node.Value.LastName, list.head.Value.LastName)
 		}
 	})
+}
+
+func BenchmarkPrepend(b *testing.B) {
+	for _, tc := range benchmarkTestCases {
+		list, _ := testListInt(tc.n)
+		b.Run(tc.name, func(b *testing.B) {
+			list.Append(NewNode(0))
+		})
+	}
 }
 
 func TestInsertAt(t *testing.T) {
@@ -480,6 +509,39 @@ func TestInsertAt(t *testing.T) {
 	})
 }
 
+func BenchmarkInsertAt(b *testing.B) {
+	node := NewNode(123456789)
+	b.Run("Beginning", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, _ := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				err := list.InsertAt(0, node)
+				assert.Nil(b, err)
+			})
+		}
+	})
+
+	b.Run("Middle", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, _ := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				err := list.InsertAt(tc.n/2, node)
+				assert.Nil(b, err)
+			})
+		}
+	})
+
+	b.Run("End", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, _ := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				err := list.InsertAt(tc.n, node)
+				assert.Nil(b, err)
+			})
+		}
+	})
+}
+
 func TestGetByIndex(t *testing.T) {
 	t.Run("Existing", func(t *testing.T) {
 		list, nodes := testListInt(5)
@@ -507,6 +569,41 @@ func TestGetByIndex(t *testing.T) {
 		retrieved, err := list.GetByIndex(-1)
 		assert.Equal(t, &NegativeIndexError{Index: -1}, err)
 		assert.Nil(t, retrieved)
+	})
+}
+
+func BenchmarkGetByIndex(b *testing.B) {
+	b.Run("Beginning", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, nodes := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				node, err := list.GetByIndex(0)
+				assert.Nil(b, err)
+				assert.Equal(b, nodes[0], node)
+			})
+		}
+	})
+
+	b.Run("Middle", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, nodes := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				node, err := list.GetByIndex(tc.n / 2)
+				assert.Nil(b, err)
+				assert.Equal(b, nodes[tc.n/2], node)
+			})
+		}
+	})
+
+	b.Run("End", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, nodes := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				node, err := list.GetByIndex(tc.n - 1)
+				assert.Nil(b, err)
+				assert.Equal(b, nodes[tc.n-1], node)
+			})
+		}
 	})
 }
 
@@ -625,6 +722,41 @@ func TestGetByValue(t *testing.T) {
 	})
 }
 
+func BenchmarkGetByValue(b *testing.B) {
+	b.Run("Beginning", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, nodes := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				i, node := list.GetByValue(nodes[0].Value, nil)
+				assert.Equal(b, 0, i)
+				assert.Equal(b, nodes[0], node)
+			})
+		}
+	})
+
+	b.Run("Middle", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, nodes := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				i, node := list.GetByValue(nodes[tc.n/2].Value, nil)
+				assert.Equal(b, tc.n/2, i)
+				assert.Equal(b, nodes[tc.n/2], node)
+			})
+		}
+	})
+
+	b.Run("End", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, nodes := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				i, node := list.GetByValue(nodes[tc.n-1].Value, nil)
+				assert.Equal(b, tc.n-1, i)
+				assert.Equal(b, nodes[tc.n-1], node)
+			})
+		}
+	})
+}
+
 func TestGetAllValues(t *testing.T) {
 	t.Run("Found", func(t *testing.T) {
 		t.Run("One", func(t *testing.T) {
@@ -679,6 +811,46 @@ func TestGetAllValues(t *testing.T) {
 		assert.Empty(t, indexes)
 	})
 }
+
+func BenchmarkGetAllValues(b *testing.B) {
+	b.Run("None", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, _ := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				list.GetAllValues(-1, nil)
+			})
+		}
+	})
+
+	b.Run("Half", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, v := &List[int]{}, 123
+			for i := 0; i < tc.n; i++ {
+				if i < tc.n/2 {
+					list.Append(NewNode(v))
+				} else {
+					list.Append(NewNode(v + 1))
+				}
+			}
+			b.Run(tc.name, func(b *testing.B) {
+				list.GetAllValues(v, nil)
+			})
+		}
+	})
+
+	b.Run("Full", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, v := &List[int]{}, 123
+			for i := 0; i < tc.n; i++ {
+				list.Append(NewNode(v))
+			}
+			b.Run(tc.name, func(b *testing.B) {
+				list.GetAllValues(v, nil)
+			})
+		}
+	})
+}
+
 func TestSwap(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		list, nodes := testListInt(5)
@@ -733,6 +905,38 @@ func TestSwap(t *testing.T) {
 		assert.Equal(t, &NegativeIndexError{Index: -1}, err)
 		err = list.Swap(3, -1)
 		assert.Equal(t, &NegativeIndexError{Index: -1}, err)
+	})
+}
+
+func BenchmarkSwap(b *testing.B) {
+	b.Run("Head and next", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, _ := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				err := list.Swap(0, 1)
+				assert.Nil(b, err)
+			})
+		}
+	})
+
+	b.Run("Head and tail", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, _ := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				err := list.Swap(0, tc.n-1)
+				assert.Nil(b, err)
+			})
+		}
+	})
+
+	b.Run("Tail and previous", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			list, _ := testListInt(tc.n)
+			b.Run(tc.name, func(b *testing.B) {
+				err := list.Swap(tc.n-2, tc.n-1)
+				assert.Nil(b, err)
+			})
+		}
 	})
 }
 
@@ -816,6 +1020,41 @@ func TestDeleteAt(t *testing.T) {
 	})
 }
 
+func BenchmarkDeleteAt(b *testing.B) {
+	b.Run("Beginning", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list, _ := testListInt(tc.n)
+				b.ResetTimer()
+				err := list.DeleteAt(0)
+				assert.Nil(b, err)
+			})
+		}
+	})
+
+	b.Run("Middle", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list, _ := testListInt(tc.n)
+				b.ResetTimer()
+				err := list.DeleteAt(tc.n / 2)
+				assert.Nil(b, err)
+			})
+		}
+	})
+
+	b.Run("End", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list, _ := testListInt(tc.n)
+				b.ResetTimer()
+				err := list.DeleteAt(tc.n - 1)
+				assert.Nil(b, err)
+			})
+		}
+	})
+}
+
 func TestDeleteNode(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		list, node := &List[int]{}, &Node[int]{}
@@ -873,6 +1112,41 @@ func TestDeleteNode(t *testing.T) {
 		node := NewNode(123)
 		err := list.DeleteNode(node)
 		assert.Equal(t, &NodeNotFoundError[int]{Node: node}, err)
+	})
+}
+
+func BenchmarkDeleteNode(b *testing.B) {
+	b.Run("Beginning", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list, nodes := testListInt(tc.n)
+				b.ResetTimer()
+				err := list.DeleteNode(nodes[0])
+				assert.Nil(b, err)
+			})
+		}
+	})
+
+	b.Run("Middle", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list, nodes := testListInt(tc.n)
+				b.ResetTimer()
+				err := list.DeleteNode(nodes[list.length/2])
+				assert.Nil(b, err)
+			})
+		}
+	})
+
+	b.Run("End", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list, nodes := testListInt(tc.n)
+				b.ResetTimer()
+				err := list.DeleteNode(nodes[list.length-1])
+				assert.Nil(b, err)
+			})
+		}
 	})
 }
 
@@ -965,6 +1239,47 @@ func TestDeleteValues(t *testing.T) {
 	})
 }
 
+func BenchmarkDeleteValues(b *testing.B) {
+	b.Run("None", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list, _ := testListInt(tc.n)
+				b.ResetTimer()
+				deleted := list.DeleteValues(0, nil)
+				assert.Equal(b, 0, deleted)
+			})
+		}
+	})
+
+	b.Run("Half", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list := &List[int]{}
+				for i := 0; i < tc.n; i++ {
+					list.Append(NewNode(i % 2))
+				}
+				b.ResetTimer()
+				deleted := list.DeleteValues(0, nil)
+				assert.Equal(b, tc.n/2, deleted)
+			})
+		}
+	})
+
+	b.Run("All", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases {
+			b.Run(tc.name, func(b *testing.B) {
+				list, v := &List[int]{}, 123
+				for i := 0; i < tc.n; i++ {
+					list.Append(NewNode(v))
+				}
+				b.ResetTimer()
+				deleted := list.DeleteValues(v, nil)
+				assert.Equal(b, tc.n, deleted)
+			})
+		}
+	})
+}
+
 func TestSort(t *testing.T) {
 	t.Run("Asc", func(t *testing.T) {
 		list, nodes := &List[int]{}, testNodesInt(5)
@@ -1049,5 +1364,35 @@ func TestSort(t *testing.T) {
 		assert.Equal(t, list.length, 0)
 		assert.Nil(t, list.head)
 		assert.Nil(t, list.tail)
+	})
+}
+
+func BenchmarkSort(b *testing.B) {
+	b.Run("Random", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases[:2] {
+			b.Run(tc.name, func(b *testing.B) {
+				list := generateRandomList(tc.n)
+				b.ResetTimer()
+				list.Sort(func(v1, v2 int) bool { return v1 < v2 })
+			})
+		}
+	})
+	b.Run("Fully sorted", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases[:2] {
+			b.Run(tc.name, func(b *testing.B) {
+				list, _ := testListInt(tc.n)
+				b.ResetTimer()
+				list.Sort(func(v1, v2 int) bool { return v1 < v2 })
+			})
+		}
+	})
+	b.Run("Reversely sorted", func(b *testing.B) {
+		for _, tc := range benchmarkTestCases[:2] {
+			b.Run(tc.name, func(b *testing.B) {
+				list, _ := testListInt(tc.n)
+				b.ResetTimer()
+				list.Sort(func(v1, v2 int) bool { return v1 > v2 })
+			})
+		}
 	})
 }

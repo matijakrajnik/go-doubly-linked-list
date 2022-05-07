@@ -1,12 +1,24 @@
 package godll
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+)
 
 // Used only for testing.
 type PersonTest struct {
 	ID        int
 	FirstName string
 	LastName  string
+}
+
+var benchmarkTestCases = []struct {
+	name string
+	n    int
+}{
+	{name: "10000 nodes", n: 10000},
+	{name: "1000000 nodes", n: 1000000},
+	{name: "100000000 nodes", n: 100000000},
 }
 
 // Create slice of int test nodes.
@@ -91,4 +103,12 @@ func testListStruct(n int) (*List[PersonTest], []*Node[PersonTest]) {
 		list.Append(node)
 	}
 	return list, nodes
+}
+
+func generateRandomList(n int) *List[int] {
+	list := &List[int]{}
+	for _, random := range rand.Perm(n) {
+		list.Append(NewNode(random))
+	}
+	return list
 }
