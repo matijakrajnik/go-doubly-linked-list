@@ -107,6 +107,7 @@ func TestHead(t *testing.T) {
 			assert.Equal(t, nodes[0], list.Head())
 		})
 	})
+
 	t.Run("After Sort", func(t *testing.T) {
 		t.Run("Head changed", func(t *testing.T) {
 			list, nodes := testListInt(4)
