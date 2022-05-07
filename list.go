@@ -41,8 +41,7 @@ func (l *List[T]) Print(w io.Writer) {
 		fmt.Fprintf(w, "%+v ", current.Value)
 		current = current.next
 	}
-	fmt.Fprintf(w, "%+v", l.tail.Value)
-	fmt.Fprintf(w, "\n")
+	fmt.Fprintf(w, "%+v\n", l.tail.Value)
 }
 
 func (l *List[T]) validateNegativeIndex(index int) error {
